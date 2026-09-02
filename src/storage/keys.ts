@@ -7,6 +7,7 @@
 export const STORAGE_KEYS = {
   consent: '@rfc/consent',
   profile: '@rfc/profile',
+  screening: '@rfc/screening/latest',
   survey: '@rfc/survey/latest',
   plan: '@rfc/plan/current',
   records: '@rfc/records',

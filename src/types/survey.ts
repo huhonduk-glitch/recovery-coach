@@ -67,6 +67,15 @@ export interface NutritionSurvey {
   lateNight: boolean;
 }
 
+/** 안전 스크리닝 결과. 기기에 저장해 앱을 다시 켜도 차단 상태가 유지된다. */
+export interface ScreeningResult {
+  schemaVersion: SchemaVersion;
+  answeredAt: string;
+  /** '예' 로 답한 문항. 비어 있어야 통과 */
+  flags: RedFlagId[];
+  blocked: boolean;
+}
+
 export interface SurveyResult {
   schemaVersion: SchemaVersion;
   answeredAt: string;
