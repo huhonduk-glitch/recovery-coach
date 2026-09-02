@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, ExerciseCard, Screen, SafetyNotice } from '@/components';
+import { Button, Card, ExerciseCard, LoadingScreen, Screen, SafetyNotice } from '@/components';
 import { assessmentStorage } from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
 import type { Recommendation } from '@/features/assessment/recommendation';
@@ -37,11 +37,7 @@ export default function AssessmentResultScreen() {
   }, []);
 
   if (rec === null) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <LoadingScreen message="결과를 준비하고 있어요" />;
   }
 
   const workout = rec.workout;
@@ -72,7 +68,9 @@ export default function AssessmentResultScreen() {
         <Text style={styles.riskTagText}>{rec.riskLabel}</Text>
       </View>
 
-      <Text style={styles.title}>분석 결과</Text>
+      <Text style={styles.title} accessibilityRole="header">
+        분석 결과
+      </Text>
       <Text style={styles.summary}>{rec.summary}</Text>
 
       {studentMode ? (
@@ -133,12 +131,6 @@ export default function AssessmentResultScreen() {
 void getExercise;
 
 const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
   riskTag: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.md,

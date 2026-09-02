@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Platform, StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, Screen, SafetyNotice } from '@/components';
+import { Button, Card, Screen, SafetyNotice, WebStorageNotice } from '@/components';
 import { assessmentStorage } from '@/features/assessment/assessmentStorage';
 import type { Assessment } from '@/features/assessment/assessmentTypes';
 import { isStudentMode } from '@/features/assessment/assessmentTypes';
@@ -125,8 +125,10 @@ export default function SettingsTabScreen() {
       <SafetyNotice
         tone="info"
         title="내 데이터는 어디에 있나요?"
-        text="설문 응답과 운동 기록은 이 휴대폰 안에만 저장되며, 외부로 전송되지 않습니다. 앱을 지우면 함께 사라집니다."
+        text="설문 응답과 운동 기록은 이 기기 안에만 저장되며, 외부로 전송되지 않습니다."
       />
+
+      <WebStorageNotice />
 
       <Card title="내 데이터 전체 삭제">
         <Text style={styles.desc}>

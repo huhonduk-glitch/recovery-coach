@@ -1,8 +1,8 @@
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Card, Screen } from '@/components';
+import { Card, EmptyState, Screen } from '@/components';
 import { logStorage } from '@/features/logs/logStorage';
 import type { WorkoutLog } from '@/features/logs/logTypes';
 import { colors, radius, spacing, typography } from '@/theme';
@@ -36,15 +36,18 @@ export default function LogsTabScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>기록</Text>
-      <Text style={styles.subtitle}>모든 기록은 이 휴대폰 안에만 저장됩니다.</Text>
+      <Text style={styles.title} accessibilityRole="header">
+        기록
+      </Text>
+      <Text style={styles.subtitle}>모든 기록은 이 기기 안에만 저장됩니다.</Text>
 
       {logs.length === 0 ? (
-        <Card title="아직 기록이 없어요">
-          <Text style={styles.empty}>
-            루틴을 한 번 마치면 통증 변화와 수행 기록이 여기에 쌓입니다.
-          </Text>
-        </Card>
+        <EmptyState
+          title="아직 기록이 없어요"
+          description="루틴을 한 번 마치면 통증 변화와 수행 기록이 여기에 쌓입니다."
+          actionLabel="오늘의 루틴 보러 가기"
+          onAction={() => router.push('/(tabs)')}
+        />
       ) : (
         <>
           <View style={styles.statRow}>
@@ -118,7 +121,6 @@ function abortLabel(reason: NonNullable<WorkoutLog['abortReason']>): string {
 const styles = StyleSheet.create({
   title: { ...typography.heading, color: colors.text, marginBottom: spacing.sm },
   subtitle: { ...typography.body, color: colors.textMuted, marginBottom: spacing.lg },
-  empty: { ...typography.body, color: colors.textMuted },
   statRow: { flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
   stat: {
     flex: 1,

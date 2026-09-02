@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, OptionButton } from '@/components';
+import { Button, OptionButton, WebStorageNotice } from '@/components';
 import { consentStorage } from '@/features/assessment/assessmentStorage';
 import { colors, radius, spacing, typography } from '@/theme';
 import { DISCLAIMER_FULL, DISCLAIMER_VERSION } from '@/utils/safety';
@@ -61,6 +61,8 @@ export default function SafetyConsentScreen() {
             <Text style={styles.itemText}>{line}</Text>
           </View>
         ))}
+
+        <WebStorageNotice />
 
         <Text style={styles.endMark}>여기까지가 안내 전문입니다.</Text>
       </ScrollView>

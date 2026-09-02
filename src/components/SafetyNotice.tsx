@@ -11,10 +11,11 @@ interface Props {
   tone?: Tone;
 }
 
+/** 연한 배경 위에서는 글자 전용 진한 색을 쓴다 (대비 4.5:1 이상) */
 const TONE_STYLE: Record<Tone, { bg: string; border: string; title: string }> = {
-  info: { bg: colors.primaryLight, border: colors.primary, title: colors.primaryDark },
-  warning: { bg: colors.warningLight, border: colors.warning, title: colors.warning },
-  danger: { bg: colors.dangerLight, border: colors.danger, title: colors.danger },
+  info: { bg: colors.primaryLight, border: colors.primary, title: colors.primaryText },
+  warning: { bg: colors.warningLight, border: colors.warning, title: colors.warningText },
+  danger: { bg: colors.dangerLight, border: colors.danger, title: colors.dangerText },
 };
 
 /** 주의사항·중단 안내 카드. danger 는 위험 신호 전용이다. */

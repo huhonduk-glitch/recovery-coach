@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
   chipPositive: { backgroundColor: colors.secondaryLight, borderColor: colors.secondary },
   chipLimit: { backgroundColor: colors.warningLight, borderColor: colors.warning },
   chipText: { ...typography.small, color: colors.text },
-  chipTextPositive: { ...typography.small, color: '#065F46' },
-  chipTextLimit: { ...typography.small, color: '#92400E' },
+  chipTextPositive: { ...typography.small, color: colors.secondaryText },
+  chipTextLimit: { ...typography.small, color: colors.warningText },
 });

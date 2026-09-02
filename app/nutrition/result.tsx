@@ -1,8 +1,16 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, MissionList, NutritionCard, Screen, SafetyNotice } from '@/components';
+import {
+  Button,
+  Card,
+  LoadingScreen,
+  MissionList,
+  NutritionCard,
+  SafetyNotice,
+  Screen,
+} from '@/components';
 import { getPlanByGoal } from '@/data/mealTemplates';
 import { getMicronutrient } from '@/data/nutritionFoods';
 import { assessmentStorage } from '@/features/assessment/assessmentStorage';
@@ -33,11 +41,7 @@ export default function NutritionResultScreen() {
   }, []);
 
   if (rec === null) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <LoadingScreen message="영양 가이드를 준비하고 있어요" />;
   }
 
   const plan = getPlanByGoal(
@@ -53,7 +57,9 @@ export default function NutritionResultScreen() {
   return (
     <Screen footer={<Button label="닫기" variant="outline" onPress={() => router.back()} />}>
       <Text style={styles.eyebrow}>나의 영양 목표</Text>
-      <Text style={styles.title}>{rec.title}</Text>
+      <Text style={styles.title} accessibilityRole="header">
+        {rec.title}
+      </Text>
 
       {rec.replacedForSafety ? (
         <SafetyNotice tone="warning" title="목표를 조정했어요" text={rec.cautionMessages[0]} />
@@ -179,12 +185,6 @@ function Macro({
 }
 
 const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
   eyebrow: { ...typography.small, color: colors.secondary, marginBottom: spacing.xs },
   title: { ...typography.heading, color: colors.text, marginBottom: spacing.xl },
   item: { ...typography.body, color: colors.textMuted, marginBottom: spacing.xs },

@@ -24,6 +24,17 @@ export const colors = {
   danger: '#EF4444',
   dangerLight: '#FEE2E2',
 
+  /**
+   * 연한 배경 위에 올리는 글자색.
+   *
+   * 원래 색(#EF4444 등)을 연한 배경에 그대로 쓰면 대비가 3:1 수준까지 떨어져
+   * 읽기 어렵다. 글자에는 아래 진한 색을 쓴다. (대비 4.5:1 이상, 테스트로 고정)
+   */
+  dangerText: '#B91C1C',
+  warningText: '#B45309',
+  secondaryText: '#047857',
+  primaryText: '#1D4ED8',
+
   // 기본
   background: '#F8FAFC',
   surface: '#FFFFFF',

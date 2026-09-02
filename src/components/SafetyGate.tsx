@@ -1,11 +1,11 @@
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
+
+import { LoadingScreen } from './LoadingScreen';
 import { isRouteAllowed, resolveGateRoute, type GateState } from '@/features/assessment/routeGuard';
-import { colors } from '@/theme';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
 
 async function readGateState(): Promise<GateState> {
@@ -54,21 +54,8 @@ export function SafetyGate({ children }: { children: ReactNode }) {
   }, [key, router]);
 
   if (!ready) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return <>{children}</>;
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-});

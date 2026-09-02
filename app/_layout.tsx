@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SafetyGate } from '@/components/SafetyGate';
 import { colors, paperTheme } from '@/theme';
 
@@ -15,14 +16,16 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <PaperProvider theme={paperTheme}>
         <StatusBar style="dark" />
-        <SafetyGate>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.background },
-            }}
-          />
-        </SafetyGate>
+        <ErrorBoundary>
+          <SafetyGate>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.background },
+              }}
+            />
+          </SafetyGate>
+        </ErrorBoundary>
       </PaperProvider>
     </SafeAreaProvider>
   );

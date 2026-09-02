@@ -12,11 +12,18 @@ interface Props {
 
 const SCORES: PainScore[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+/** 선택된 칸의 배경색 (흰 글자를 올린다) */
 function scoreColor(score: PainScore): string {
-  if (score === 0) return colors.secondary;
   if (score <= 3) return colors.secondary;
   if (score <= 6) return colors.warning;
   return colors.danger;
+}
+
+/** 아래 요약 문구의 글자색. 흰 배경 위라 진한 색을 쓴다. */
+function scoreTextColor(score: PainScore): string {
+  if (score <= 3) return colors.secondaryText;
+  if (score <= 6) return colors.warningText;
+  return colors.dangerText;
 }
 
 /**
@@ -57,7 +64,7 @@ export function PainSlider({ value, onChange, label = '지금 통증은 몇 점�
 
       {value !== null ? (
         <View style={[styles.readout, { borderColor: scoreColor(value) }]}>
-          <Text style={[styles.readoutScore, { color: scoreColor(value) }]}>{value}점</Text>
+          <Text style={[styles.readoutScore, { color: scoreTextColor(value) }]}>{value}점</Text>
           <Text style={styles.readoutLabel}>{painScoreLabel(value)}</Text>
         </View>
       ) : null}

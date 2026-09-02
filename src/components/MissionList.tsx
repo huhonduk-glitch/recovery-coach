@@ -74,6 +74,6 @@ const styles = StyleSheet.create({
   checkTextDone: { color: colors.onPrimary },
   body: { flex: 1 },
   text: { ...typography.body, color: colors.text },
-  textDone: { color: '#065F46' },
+  textDone: { color: colors.secondaryText },
   reason: { ...typography.small, color: colors.textMuted, marginTop: spacing.xxs },
 });

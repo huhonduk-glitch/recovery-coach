@@ -1,11 +1,10 @@
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { resolveGateRoute, type GateRoute } from '@/features/assessment/routeGuard';
-import { colors } from '@/theme';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
 
 /**
@@ -44,21 +43,8 @@ export default function EntryScreen() {
   }, []);
 
   if (target === null) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return <Redirect href={target} />;
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-});

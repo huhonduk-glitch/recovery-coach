@@ -2,7 +2,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, MissionList, Screen, SafetyNotice } from '@/components';
+import { Button, Card, MissionList, Screen, SafetyNotice, WebStorageNotice } from '@/components';
 import { assessmentStorage } from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { maxPainScore } from '@/features/assessment/assessmentEngine';
@@ -52,6 +52,8 @@ export default function HomeScreen() {
     <Screen>
       <Text style={styles.greeting}>안녕하세요</Text>
       <Text style={styles.headline}>오늘 몸 상태는 어떤가요?</Text>
+
+      <WebStorageNotice dismissible />
 
       {workout ? (
         <Card title="오늘의 회복 루틴" accent={colors.primary}>
