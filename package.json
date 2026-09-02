@@ -17,7 +17,8 @@
     "images:check": "node scripts/check-images.mjs",
     "media:priority": "node scripts/generate-priority.mjs",
     "videos:check": "node scripts/check-videos.mjs",
-    "review:packet": "node scripts/generate-review-packet.mjs"
+    "review:packet": "node scripts/generate-review-packet.mjs",
+    "review:workbook": "node scripts/generate-review-packet.mjs && python3 scripts/build-review-workbook.py"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",

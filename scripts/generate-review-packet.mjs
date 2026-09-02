@@ -457,6 +457,20 @@ ${toHtml(markdown)}
 
 writeFileSync(join(ROOT, 'docs', 'review-packet.html'), html);
 
+// 엑셀 검수표를 만들 때 쓰는 자료도 함께 내보낸다
+writeFileSync(
+  join(ROOT, 'docs', 'review-data.json'),
+  JSON.stringify({ generatedAt: today, redFlags, exercises, plans, categoryLabel: CATEGORY_LABEL,
+    thresholds: {
+      painStop: threshold('PAIN_STOP_THRESHOLD'),
+      painPhase1: threshold('PAIN_PHASE1_THRESHOLD'),
+      painPhase2: threshold('PAIN_PHASE2_THRESHOLD'),
+      inWorkoutStop: threshold('IN_WORKOUT_STOP_THRESHOLD'),
+      inWorkoutReduce: threshold('IN_WORKOUT_REDUCE_THRESHOLD'),
+    } }, null, 2),
+);
+
 console.log(`[review:packet] 위험신호 ${redFlags.length}개 · 운동 ${exercises.length}개 · 영양 ${plans.length}트랙`);
 console.log('  docs/REVIEW_PACKET.md');
 console.log('  docs/review-packet.html  ← 브라우저에서 열어 인쇄 > PDF로 저장');
+console.log('  docs/review-data.json    (엑셀 검수표 생성용)');
