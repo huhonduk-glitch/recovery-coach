@@ -16,7 +16,8 @@
     "images:list": "node scripts/generate-image-list.mjs",
     "images:check": "node scripts/check-images.mjs",
     "media:priority": "node scripts/generate-priority.mjs",
-    "videos:check": "node scripts/check-videos.mjs"
+    "videos:check": "node scripts/check-videos.mjs",
+    "review:packet": "node scripts/generate-review-packet.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
