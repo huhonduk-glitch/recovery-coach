@@ -3,48 +3,42 @@
  *
  * 규칙
  * - 화면에서 색상 값을 직접 쓰지 않는다. 반드시 이 파일을 거친다.
- * - `danger` 는 운동 중단·상담 안내 전용이다. 일반 버튼에 쓰지 않는다.
- *   (경고 색을 남용하면 진짜 경고가 눈에 안 들어온다)
+ * - danger(#EF4444)는 위험 신호·운동 중단 안내 전용이다. 일반 버튼에 쓰지 않는다.
  */
 export const colors = {
-  // 브랜드 — 회복·안정을 뜻하는 딥 그린틸
-  primary: '#1F6F63',
-  primaryDark: '#155249',
-  primaryLight: '#E6F2EF',
+  // 메인 — 딥 블루
+  primary: '#2563EB',
+  primaryDark: '#1D4ED8',
+  primaryLight: '#DBEAFE',
   onPrimary: '#FFFFFF',
 
-  // 보조
-  secondary: '#3C6E9B',
-  secondaryLight: '#E7EFF6',
+  // 보조 — 민트/그린
+  secondary: '#10B981',
+  secondaryLight: '#D1FAE5',
 
-  // 상태
-  success: '#2E7D32',
-  successLight: '#E8F3E9',
-  warning: '#C77700',
-  warningLight: '#FDF2E2',
-  danger: '#B3261E', // ⚠️ 중단·차단·상담 안내 전용
-  dangerLight: '#FBEAE9',
+  // 경고 — 오렌지
+  warning: '#F59E0B',
+  warningLight: '#FEF3C7',
 
-  // 텍스트
-  text: '#1A1C1B',
-  textMuted: '#5A6260',
-  textDisabled: '#9AA3A1',
-  onDark: '#FFFFFF',
+  // 위험 — 레드 (위험 신호·중단 안내 전용)
+  danger: '#EF4444',
+  dangerLight: '#FEE2E2',
 
-  // 배경·구분선
-  background: '#F7F9F8',
+  // 기본
+  background: '#F8FAFC',
   surface: '#FFFFFF',
-  surfaceAlt: '#EFF3F2',
-  border: '#DCE3E1',
-  overlay: 'rgba(26, 28, 27, 0.45)',
+  surfaceAlt: '#F1F5F9',
+  border: '#E2E8F0',
+  text: '#0F172A',
+  textMuted: '#64748B',
+  textDisabled: '#94A3B8',
+  overlay: 'rgba(15, 23, 42, 0.45)',
 
-  // 통증 척도 시각화 (0~10)
-  pain: {
-    none: '#2E7D32',
-    mild: '#7CB342',
-    moderate: '#C77700',
-    severe: '#B3261E',
+  /** 위험도 분류 색상 (Red / Yellow / Green / Performance) */
+  risk: {
+    red: '#EF4444',
+    yellow: '#F59E0B',
+    green: '#10B981',
+    performance: '#2563EB',
   },
 } as const;
-
-export type ColorToken = keyof typeof colors;

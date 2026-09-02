@@ -2,10 +2,10 @@ import { MD3LightTheme, type MD3Theme } from 'react-native-paper';
 
 import { colors } from './colors';
 
-/** React Native Paper 에 우리 컬러 토큰을 주입한 테마 */
+/** React Native Paper 에 앱 컬러 토큰을 주입한 테마 */
 export const paperTheme: MD3Theme = {
   ...MD3LightTheme,
-  roundness: 10,
+  roundness: 12,
   colors: {
     ...MD3LightTheme.colors,
     primary: colors.primary,

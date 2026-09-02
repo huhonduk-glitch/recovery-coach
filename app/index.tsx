@@ -2,49 +2,43 @@ import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { DISCLAIMER_VERSION } from '@/content/copy/disclaimer';
-import { consentRepository, profileRepository, screeningRepository } from '@/storage';
+import {
+  assessmentStorage,
+  consentStorage,
+  recommendationStorage,
+} from '@/features/assessment/assessmentStorage';
+import { resolveGateRoute, type GateRoute } from '@/features/assessment/routeGuard';
 import { colors } from '@/theme';
-
-type Target =
-  | '/(onboarding)/intro'
-  | '/(onboarding)/profile'
-  | '/(survey)/screening'
-  | '/(result)/blocked?reason=redFlag'
-  | '/(tabs)/home';
+import { DISCLAIMER_VERSION } from '@/utils/safety';
 
 /**
  * 앱 진입 분기.
  *
- * 순서가 곧 안전 게이트다. 앞 단계를 통과하지 못하면 뒤 화면에 닿을 수 없다.
- *   1) 동의  2) 기본 정보  3) 안전 스크리닝  4) 홈
- *
- * 차단 상태는 기기에 저장되므로 앱을 껐다 켜도 우회되지 않는다.
- * (docs/SAFETY_POLICY.md §2, §8.1)
+ * 순서가 곧 안전 게이트다.
+ *   1) 안전 안내 동의  2) 설문  3) 위험 신호 확인  4) 홈
  */
-async function resolveTarget(): Promise<Target> {
-  const consentValid = await consentRepository.isValid(DISCLAIMER_VERSION);
-  if (!consentValid) return '/(onboarding)/intro';
-
-  const profile = await profileRepository.get();
-  if (profile === null) return '/(onboarding)/profile';
-
-  const screening = await screeningRepository.get();
-  if (screening === null) return '/(survey)/screening';
-  if (screening.blocked) return '/(result)/blocked?reason=redFlag';
-
-  return '/(tabs)/home';
-}
-
 export default function EntryScreen() {
-  const [target, setTarget] = useState<Target | null>(null);
+  const [target, setTarget] = useState<GateRoute | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const next = await resolveTarget();
-      if (!cancelled) setTarget(next);
+      const [consentValid, assessment, recommendation] = await Promise.all([
+        consentStorage.isValid(DISCLAIMER_VERSION),
+        assessmentStorage.get(),
+        recommendationStorage.get(),
+      ]);
+
+      if (cancelled) return;
+
+      setTarget(
+        resolveGateRoute({
+          consentValid,
+          hasAssessment: assessment !== null,
+          blocked: recommendation?.riskLevel === 'red',
+        }),
+      );
     })();
 
     return () => {
