@@ -15,3 +15,4 @@ export { EmptyState } from './EmptyState';
 export { ErrorBoundary } from './ErrorBoundary';
 export { BodyDiagram } from './BodyDiagram';
 export { ExerciseFigure } from './ExerciseFigure';
+export { ExerciseVideoLink } from './ExerciseVideoLink';

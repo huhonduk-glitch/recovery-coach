@@ -80,6 +80,24 @@
 
 ---
 
+## 동작 영상 연결하기
+
+앱은 영상을 **가지고 있지 않습니다.** 링크만 보관하고, 누르면 유튜브가 열립니다.
+영상이 없는 운동에는 **"유튜브에서 찾아보기"** 버튼이 나옵니다 (지금도 동작합니다).
+
+```bash
+npm run videos:check   # 몇 개 연결됐는지 확인
+```
+
+| 문서 | 내용 |
+|---|---|
+| [docs/VIDEO_GUIDE.md](docs/VIDEO_GUIDE.md) | 저작권 규칙, 영상 고르는 기준 |
+| [docs/VIDEO_CANDIDATES.md](docs/VIDEO_CANDIDATES.md) | 1순위 운동 후보 링크 (**검수 전**) |
+| [docs/MEDIA_PRIORITY.md](docs/MEDIA_PRIORITY.md) | 86개 제작 우선순위 |
+
+> **링크는 되고, 파일은 안 됩니다.** 영상을 내려받아 앱에 넣는 것은 저작권 침해입니다.
+> 조회수가 높다고 안전한 영상은 아닙니다. 선정 기준은 VIDEO_GUIDE 를 따르세요.
+
 ## 동작 이미지 추가하기
 
 앱은 지금 **글 설명 + 부위 표시 그림**으로 동작합니다. 사진이 없어도 정상 동작합니다.
@@ -110,6 +128,9 @@ npm run images:check  # 지금 몇 개가 준비됐는지 확인
 | [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) | 운동·영양 콘텐츠 작성 규칙, Phase 정의, 검수 체크리스트 |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 마일스톤 M0~M8, 단계별 체크리스트, 리스크 |
 | [docs/IMAGE_LIST.md](docs/IMAGE_LIST.md) | 동작 이미지 86개 제작 목록 (자동 생성) |
+| [docs/MEDIA_PRIORITY.md](docs/MEDIA_PRIORITY.md) | 이미지·영상 제작 우선순위 (자동 생성) |
+| [docs/VIDEO_GUIDE.md](docs/VIDEO_GUIDE.md) | 영상 저작권 규칙과 선정 기준 |
+| [docs/VIDEO_CANDIDATES.md](docs/VIDEO_CANDIDATES.md) | 영상 후보 링크 (검수 전) |
 
 ---
 

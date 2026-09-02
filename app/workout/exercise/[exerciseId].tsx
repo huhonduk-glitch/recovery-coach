@@ -1,7 +1,14 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, ExerciseFigure, SafetyNotice, Screen } from '@/components';
+import {
+  Button,
+  Card,
+  ExerciseFigure,
+  ExerciseVideoLink,
+  SafetyNotice,
+  Screen,
+} from '@/components';
 import { getExercise } from '@/data/exercises';
 import { colors, radius, spacing, typography } from '@/theme';
 import { COMMON_STOP_SIGNS } from '@/utils/safety';
@@ -43,6 +50,8 @@ export default function ExerciseDetailScreen() {
       </View>
 
       <Text style={styles.purpose}>{exercise.purpose}</Text>
+
+      <ExerciseVideoLink exercise={exercise} />
 
       <Card title="이렇게 합니다">
         {exercise.description.map((line, i) => (

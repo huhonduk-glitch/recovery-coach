@@ -14,7 +14,9 @@
     "build:web": "expo export --platform web --output-dir dist && node scripts/postbuild-web.mjs dist",
     "serve:web": "npx serve dist -s",
     "images:list": "node scripts/generate-image-list.mjs",
-    "images:check": "node scripts/check-images.mjs"
+    "images:check": "node scripts/check-images.mjs",
+    "media:priority": "node scripts/generate-priority.mjs",
+    "videos:check": "node scripts/check-videos.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
