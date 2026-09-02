@@ -110,29 +110,24 @@ export function useAssessmentForm() {
     return isStudentMode({ userType: state.userType, ageGroup: state.ageGroup });
   }, [state.userType, state.ageGroup]);
 
-  /** 완성된 설문 결과. 필수 항목이 비어 있으면 null */
+  /**
+   * 완성된 설문 결과.
+   *
+   * 건너뛴 항목은 안전한 기본값으로 채운다.
+   * 다만 사용자 유형과 나이대는 학생 보호 규칙을 정하는 값이라 건너뛸 수 없다.
+   * 위험 신호는 화면에서 확인을 강제하므로 여기서는 그대로 쓴다.
+   */
   const build = useCallback((): Assessment | null => {
-    const {
-      userType,
-      ageGroup,
-      sex,
-      availableTime,
-      sleepQuality,
-      stressLevel,
-      background,
-      nutrition,
-    } = state;
+    const { userType, ageGroup, background, nutrition } = state;
 
-    if (
-      userType === null ||
-      ageGroup === null ||
-      sex === null ||
-      availableTime === null ||
-      sleepQuality === null ||
-      stressLevel === null
-    ) {
-      return null;
-    }
+    // 학생 모드 판정에 필요한 두 값은 반드시 있어야 한다
+    if (userType === null || ageGroup === null) return null;
+
+    const sex = state.sex ?? 'undisclosed';
+    // 건너뛰면 가장 부담이 적은 20분으로 잡는다
+    const availableTime = state.availableTime ?? 20;
+    const sleepQuality = state.sleepQuality ?? 'fair';
+    const stressLevel = state.stressLevel ?? 'medium';
 
     const painDetails: PainDetail[] = state.painRegions
       .map((region) => {
@@ -159,10 +154,11 @@ export function useAssessmentForm() {
       userType,
       ageGroup,
       sex,
-      places: state.places,
+      places: state.places.length > 0 ? state.places : ['home'],
       equipment: state.equipment.length > 0 ? state.equipment : ['bodyweight'],
       availableTime,
-      goals: state.goals,
+      // 목표를 건너뛰면 가장 부담이 적은 일반 건강관리로 둔다
+      goals: state.goals.length > 0 ? state.goals : ['generalHealth'],
       painRegions: state.painRegions,
       painDetails,
       redFlags: state.redFlags,

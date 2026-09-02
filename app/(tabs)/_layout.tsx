@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import type { ColorValue } from 'react-native';
+import { Platform, type ColorValue } from 'react-native';
 
+import { WEB_MAX_WIDTH } from '@/components/Screen';
 import { colors } from '@/theme';
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -21,7 +22,16 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          // 웹에서 탭 바가 화면 끝까지 늘어나지 않도록 본문과 같은 폭으로 맞춘다
+          ...Platform.select({
+            web: { maxWidth: WEB_MAX_WIDTH, width: '100%', alignSelf: 'center' },
+            default: {},
+          }),
+        },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen name="index" options={{ title: '홈', tabBarIcon: tabIcon('home-outline') }} />

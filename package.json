@@ -10,7 +10,9 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "build:web": "expo export --platform web --output-dir dist && node scripts/postbuild-web.mjs dist",
+    "serve:web": "npx serve dist -s"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",

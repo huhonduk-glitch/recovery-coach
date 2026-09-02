@@ -3,7 +3,8 @@ import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button, Card, MissionList, Screen, SafetyNotice } from '@/components';
-import { assessmentStorage, recommendationStorage } from '@/features/assessment/assessmentStorage';
+import { assessmentStorage } from '@/features/assessment/assessmentStorage';
+import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { maxPainScore } from '@/features/assessment/assessmentEngine';
 import type { Recommendation } from '@/features/assessment/recommendation';
 import { formatDuration } from '@/features/exercise/workoutBuilder';
@@ -24,7 +25,7 @@ export default function HomeScreen() {
       let cancelled = false;
       (async () => {
         const [r, a, count, recent] = await Promise.all([
-          recommendationStorage.get(),
+          loadRecommendation(),
           assessmentStorage.get(),
           logStorage.completedThisWeek(),
           logStorage.recent(1),

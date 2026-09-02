@@ -29,7 +29,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "single",
+      "name": "리커버핏 Coach",
+      "shortName": "리커버핏",
+      "lang": "ko",
+      "themeColor": "#2563EB",
+      "backgroundColor": "#F8FAFC",
+      "display": "standalone",
+      "description": "설문으로 몸 상태를 확인하고 회복 운동과 영양 가이드를 안내받는 앱"
     },
     "plugins": [
       "expo-router"

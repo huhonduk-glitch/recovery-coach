@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { BackHandler, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Button, Card, Screen, SafetyNotice } from '@/components';
 import {
@@ -11,6 +11,7 @@ import { RED_FLAG_QUESTIONS } from '@/features/assessment/assessmentQuestions';
 import { EMERGENCY_FLAG_IDS, isStudentMode } from '@/features/assessment/assessmentTypes';
 import { colors, spacing, typography } from '@/theme';
 import { BLOCKED_MESSAGE, CONSULT_GUIDE, EMERGENCY_NOTICE } from '@/utils/safety';
+import { usePreventBack } from '@/utils/usePreventBack';
 
 /**
  * 위험 신호 상담 안내 화면.
@@ -44,11 +45,8 @@ export default function BlockedScreen() {
     };
   }, []);
 
-  // 안드로이드 하드웨어 뒤로가기로 이전 화면에 돌아가지 못하게 막는다
-  useEffect(() => {
-    const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
-    return () => sub.remove();
-  }, []);
+  // 뒤로가기로 이전 화면에 돌아가지 못하게 막는다 (웹·앱 모두)
+  usePreventBack();
 
   async function restart() {
     await Promise.all([assessmentStorage.clear(), recommendationStorage.clear()]);

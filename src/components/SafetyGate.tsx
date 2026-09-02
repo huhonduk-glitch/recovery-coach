@@ -2,11 +2,8 @@ import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import {
-  assessmentStorage,
-  consentStorage,
-  recommendationStorage,
-} from '@/features/assessment/assessmentStorage';
+import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
+import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { isRouteAllowed, resolveGateRoute, type GateState } from '@/features/assessment/routeGuard';
 import { colors } from '@/theme';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
@@ -15,7 +12,7 @@ async function readGateState(): Promise<GateState> {
   const [consentValid, assessment, recommendation] = await Promise.all([
     consentStorage.isValid(DISCLAIMER_VERSION),
     assessmentStorage.get(),
-    recommendationStorage.get(),
+    loadRecommendation(),
   ]);
 
   return {

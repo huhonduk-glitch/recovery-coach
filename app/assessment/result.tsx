@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { Button, Card, ExerciseCard, Screen, SafetyNotice } from '@/components';
-import { assessmentStorage, recommendationStorage } from '@/features/assessment/assessmentStorage';
+import { assessmentStorage } from '@/features/assessment/assessmentStorage';
+import { loadRecommendation } from '@/features/assessment/recommendationService';
 import type { Recommendation } from '@/features/assessment/recommendation';
 import { getExercise } from '@/data/exercises';
 import { formatDuration } from '@/features/exercise/workoutBuilder';
@@ -25,7 +26,7 @@ export default function AssessmentResultScreen() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [r, a] = await Promise.all([recommendationStorage.get(), assessmentStorage.get()]);
+      const [r, a] = await Promise.all([loadRecommendation(), assessmentStorage.get()]);
       if (cancelled) return;
       setRec(r);
       setStudentMode(a?.userType === 'student' || a?.ageGroup === 'teens');

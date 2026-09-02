@@ -79,8 +79,16 @@ describe('[S11] 화면 문구에 금지 표현이 없다', () => {
 describe('안전 장치가 화면에서 빠지지 않았는지', () => {
   it('상담 안내 화면은 뒤로가기를 막는다', () => {
     const source = read('app/assessment/blocked.tsx');
-    expect(source).toContain('BackHandler');
-    expect(source).toContain('hardwareBackPress');
+    expect(source).toContain('usePreventBack()');
+  });
+
+  it('뒤로가기 차단은 앱과 웹 양쪽을 처리한다', () => {
+    const hook = read('src/utils/usePreventBack.ts');
+    // 앱: 하드웨어 뒤로가기
+    expect(hook).toContain('hardwareBackPress');
+    // 웹: BackHandler 가 동작하지 않으므로 히스토리를 다시 밀어 넣는다
+    expect(hook).toContain("Platform.OS === 'web'");
+    expect(hook).toContain('popstate');
   });
 
   it('상담 안내 화면에서 설문 다시 하기는 저장된 결과를 지운다', () => {

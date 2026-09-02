@@ -5,7 +5,8 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Button, Card, MissionList, NutritionCard, Screen, SafetyNotice } from '@/components';
 import { getPlanByGoal } from '@/data/mealTemplates';
 import { getMicronutrient } from '@/data/nutritionFoods';
-import { assessmentStorage, recommendationStorage } from '@/features/assessment/assessmentStorage';
+import { assessmentStorage } from '@/features/assessment/assessmentStorage';
+import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { isStudentMode } from '@/features/assessment/assessmentTypes';
 import type { NutritionRecommendation } from '@/features/nutrition/nutritionTypes';
 import { colors, radius, spacing, typography } from '@/theme';
@@ -19,7 +20,7 @@ export default function NutritionResultScreen() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [r, a] = await Promise.all([recommendationStorage.get(), assessmentStorage.get()]);
+      const [r, a] = await Promise.all([loadRecommendation(), assessmentStorage.get()]);
       if (cancelled) return;
       setRec(r?.nutrition ?? null);
       setStudent(

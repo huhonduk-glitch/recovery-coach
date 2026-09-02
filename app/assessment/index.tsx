@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
   BodyRegionSelector,
@@ -55,7 +55,10 @@ import { colors, spacing, typography } from '@/theme';
  * 위험 신호 문항은 특히 그렇다.
  */
 
+type SurveyMode = 'quick' | 'full';
+
 type StepId =
+  | 'mode'
   | 'userType'
   | 'basic'
   | 'environment'
@@ -75,26 +78,51 @@ export default function AssessmentScreen() {
   const form = useAssessmentForm();
   const { state, set, toggleIn, setPainDetail, studentMode } = form;
 
+  const [surveyMode, setSurveyMode] = useState<SurveyMode | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [painIndex, setPainIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  /** 통증 부위를 고르지 않았으면 통증 상세 단계를 건너뛴다 */
+  /**
+   * 진행할 단계 목록.
+   *
+   * 빠른 시작(quick)에서는 꼭 필요한 것만 묻는다.
+   * ⚠️ 어떤 모드에서도 위험 신호 확인(redFlags)은 빠지지 않는다.
+   *    안전 게이트를 우회하는 경로를 만들지 않는다. (docs/SAFETY_POLICY.md §2)
+   */
   const steps = useMemo<StepId[]>(() => {
-    const base: StepId[] = [
-      'userType',
-      'basic',
-      'environment',
-      'time',
-      'goals',
-      'painRegions',
-    ];
+    const base: StepId[] = ['mode'];
+    if (surveyMode === null) return base;
+
+    base.push('userType', 'basic');
+
+    if (surveyMode === 'full') {
+      base.push('environment', 'time', 'goals');
+    }
+
+    base.push('painRegions');
     if (state.painRegions.length > 0) base.push('painDetail');
-    base.push('redFlags', 'background', 'nutritionGoal', 'nutritionHabit', 'allergies');
-    base.push('eatingRisk');
-    base.push('condition');
+    base.push('redFlags');
+
+    if (surveyMode === 'full') {
+      base.push('background', 'nutritionGoal', 'nutritionHabit', 'allergies', 'eatingRisk', 'condition');
+    }
     return base;
-  }, [state.painRegions.length]);
+  }, [surveyMode, state.painRegions.length]);
+
+  /** 건너뛸 수 있는 단계 (안전과 직결된 단계는 제외한다) */
+  const SKIPPABLE: StepId[] = [
+    'environment',
+    'time',
+    'goals',
+    'painRegions',
+    'background',
+    'nutritionGoal',
+    'nutritionHabit',
+    'allergies',
+    'eatingRisk',
+    'condition',
+  ];
 
   const step = steps[stepIndex] ?? 'userType';
   const isLast = stepIndex === steps.length - 1;
@@ -143,10 +171,15 @@ export default function AssessmentScreen() {
   /** 다음 버튼을 누를 수 있는 조건 */
   const canProceed = ((): boolean => {
     switch (step) {
+      case 'mode':
+        return surveyMode !== null;
       case 'userType':
         return state.userType !== null;
       case 'basic':
-        return state.ageGroup !== null && state.sex !== null;
+        // 빠른 시작에서는 나이대만 있으면 넘어갈 수 있다 (성별은 선택)
+        return surveyMode === 'quick'
+          ? state.ageGroup !== null
+          : state.ageGroup !== null && state.sex !== null;
       case 'environment':
         return state.places.length > 0;
       case 'time':
@@ -183,21 +216,62 @@ export default function AssessmentScreen() {
   return (
     <Screen
       footer={
-        <View style={styles.footerRow}>
-          {stepIndex > 0 ? (
-            <Button label="이전" variant="outline" onPress={goBack} style={styles.backButton} />
+        <View style={styles.footerCol}>
+          <View style={styles.footerRow}>
+            {stepIndex > 0 ? (
+              <Button label="이전" variant="outline" onPress={goBack} style={styles.backButton} />
+            ) : null}
+            <Button
+              label={isLast ? '결과 보기' : '다음'}
+              onPress={goNext}
+              disabled={!canProceed}
+              loading={submitting}
+              style={styles.nextButton}
+            />
+          </View>
+
+          {SKIPPABLE.includes(step) ? (
+            <Pressable
+              onPress={goNext}
+              accessibilityRole="button"
+              accessibilityLabel="이 질문 건너뛰기"
+              style={styles.skip}
+            >
+              <Text style={styles.skipText}>이 질문 건너뛰기</Text>
+            </Pressable>
           ) : null}
-          <Button
-            label={isLast ? '결과 보기' : '다음'}
-            onPress={goNext}
-            disabled={!canProceed}
-            loading={submitting}
-            style={styles.nextButton}
-          />
         </View>
       }
     >
       <ProgressBar current={stepIndex + 1} total={steps.length} />
+
+      {step === 'mode' ? (
+        <>
+          <Question
+            title="어떻게 시작할까요?"
+            hint="지금 바로 시작하고, 나중에 자세히 답하셔도 됩니다."
+          />
+
+          <OptionButton
+            label="빠른 시작 (약 1분)"
+            hint="꼭 필요한 것만 묻습니다. 나중에 내정보에서 자세히 채울 수 있어요."
+            selected={surveyMode === 'quick'}
+            onPress={() => setSurveyMode('quick')}
+          />
+          <OptionButton
+            label="자세히 설문하기 (약 5분)"
+            hint="목표·운동 경험·식습관까지 반영해 더 잘 맞는 루틴을 만들어 드려요."
+            selected={surveyMode === 'full'}
+            onPress={() => setSurveyMode('full')}
+          />
+
+          <SafetyNotice
+            tone="warning"
+            title="어떤 경우에도 건너뛰지 않는 것"
+            text="안전 확인(위험 신호 12개)은 빠른 시작에서도 반드시 확인합니다. 이 부분만은 건너뛸 수 없어요."
+          />
+        </>
+      ) : null}
 
       {step === 'userType' ? (
         <>
@@ -234,7 +308,14 @@ export default function AssessmentScreen() {
             />
           ) : null}
 
-          <Question title="성별" hint="선택하지 않으셔도 됩니다." />
+          <Question
+            title="성별"
+            hint={
+              surveyMode === 'quick'
+                ? '선택하지 않고 넘어가셔도 됩니다.'
+                : '선택하지 않으셔도 됩니다.'
+            }
+          />
           {SEX_CHOICES.map((c) => (
             <OptionButton
               key={c.value}
@@ -646,7 +727,10 @@ const styles = StyleSheet.create({
   questionTitle: { ...typography.title, color: colors.text },
   questionTitleSmall: { ...typography.bodyStrong, color: colors.text },
   questionHint: { ...typography.small, color: colors.textMuted, marginTop: spacing.xs },
+  footerCol: { gap: spacing.sm },
   footerRow: { flexDirection: 'row', gap: spacing.sm },
+  skip: { alignSelf: 'center', paddingVertical: spacing.sm, paddingHorizontal: spacing.lg },
+  skipText: { ...typography.small, color: colors.textMuted, textDecorationLine: 'underline' },
   backButton: { flex: 1 },
   nextButton: { flex: 2 },
   spacer: { height: spacing.lg },

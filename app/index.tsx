@@ -2,11 +2,8 @@ import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import {
-  assessmentStorage,
-  consentStorage,
-  recommendationStorage,
-} from '@/features/assessment/assessmentStorage';
+import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
+import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { resolveGateRoute, type GateRoute } from '@/features/assessment/routeGuard';
 import { colors } from '@/theme';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
@@ -27,7 +24,7 @@ export default function EntryScreen() {
       const [consentValid, assessment, recommendation] = await Promise.all([
         consentStorage.isValid(DISCLAIMER_VERSION),
         assessmentStorage.get(),
-        recommendationStorage.get(),
+        loadRecommendation(),
       ]);
 
       if (cancelled) return;

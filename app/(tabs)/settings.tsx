@@ -30,6 +30,18 @@ export default function SettingsTabScreen() {
     ? isStudentMode({ userType: assessment.userType, ageGroup: assessment.ageGroup })
     : false;
 
+  /**
+   * 빠른 시작으로만 답한 상태인지.
+   * 목표를 고르지 않아 기본값(일반 건강관리)만 들어 있고 운동 경험도 비어 있으면
+   * 자세히 설문하기를 권한다.
+   */
+  const quickAnswered =
+    assessment !== null &&
+    assessment.goals.length === 1 &&
+    assessment.goals[0] === 'generalHealth' &&
+    assessment.exerciseBackground.frequency === 'none' &&
+    assessment.exerciseBackground.squatExperience === 'none';
+
   function confirmDelete() {
     const message =
       '운동 기록, 설문 응답, 추천 결과가 모두 지워지고 되돌릴 수 없어요. 진행할까요?';
@@ -80,8 +92,14 @@ export default function SettingsTabScreen() {
         <Text style={styles.desc}>
           몸 상태나 목표가 바뀌었다면 설문을 다시 진행해 주세요. 추천 루틴이 새로 만들어집니다.
         </Text>
+        {quickAnswered ? (
+          <Text style={styles.note}>
+            빠른 시작으로 답하신 상태예요. 자세히 설문하면 목표와 식습관까지 반영해 더 잘 맞는
+            루틴을 만들어 드릴 수 있어요.
+          </Text>
+        ) : null}
         <Button
-          label="설문 다시 하기"
+          label={quickAnswered ? '자세히 설문하기' : '설문 다시 하기'}
           onPress={() => router.push('/assessment')}
           style={styles.button}
         />
