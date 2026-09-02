@@ -2,7 +2,15 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, PainSlider, ProgressBar, Screen, SafetyNotice } from '@/components';
+import {
+  Button,
+  Card,
+  ExerciseFigure,
+  PainSlider,
+  ProgressBar,
+  SafetyNotice,
+  Screen,
+} from '@/components';
 import { getExercises } from '@/data/exercises';
 import { getProgram } from '@/data/programs';
 import { adjustDuringWorkout, decideExerciseLevel } from '@/features/assessment/assessmentEngine';
@@ -312,6 +320,8 @@ export default function WorkoutPlayerScreen() {
 
       <Text style={styles.exerciseName}>{current.name}</Text>
       <Text style={styles.volume}>{volume}</Text>
+
+      <ExerciseFigure exercise={current} compact />
 
       <View style={styles.timerBox}>
         <Text style={styles.timer}>

@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Button, Card, Screen, SafetyNotice } from '@/components';
+import { Button, Card, ExerciseFigure, SafetyNotice, Screen } from '@/components';
 import { getExercise } from '@/data/exercises';
 import { colors, radius, spacing, typography } from '@/theme';
 import { COMMON_STOP_SIGNS } from '@/utils/safety';
@@ -33,11 +33,7 @@ export default function ExerciseDetailScreen() {
 
   return (
     <Screen footer={<Button label="닫기" variant="outline" onPress={() => router.back()} />}>
-      {/* 영상은 아직 없다. 자리만 만들어 두고 나중에 URL 만 채운다. */}
-      <View style={styles.videoPlaceholder}>
-        <Text style={styles.videoText}>동작 영상은 준비 중입니다</Text>
-        <Text style={styles.videoSub}>아래 설명만으로도 따라 할 수 있게 작성했어요</Text>
-      </View>
+      <ExerciseFigure exercise={exercise} />
 
       <Text style={styles.title}>{exercise.name}</Text>
       <View style={styles.tagRow}>
@@ -96,18 +92,6 @@ export default function ExerciseDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  videoPlaceholder: {
-    height: 180,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surfaceAlt,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  videoText: { ...typography.bodyStrong, color: colors.textMuted },
-  videoSub: { ...typography.small, color: colors.textDisabled, marginTop: spacing.xs },
   title: { ...typography.heading, color: colors.text, marginBottom: spacing.sm },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
   tag: {

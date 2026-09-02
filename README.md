@@ -80,6 +80,26 @@
 
 ---
 
+## 동작 이미지 추가하기
+
+앱은 지금 **글 설명 + 부위 표시 그림**으로 동작합니다. 사진이 없어도 정상 동작합니다.
+사진을 넣으면 자동으로 그 자리에 나옵니다.
+
+```bash
+npm run images:list   # 필요한 이미지 목록을 docs/IMAGE_LIST.md 로 생성
+npm run images:check  # 지금 몇 개가 준비됐는지 확인
+```
+
+1. `assets/exercises/` 에 파일을 넣습니다. 파일명은 운동 id 와 같게 (`knee-p1-01.png`)
+2. `src/data/exerciseImages.ts` 에 한 줄 추가
+3. 앱을 다시 실행
+
+**반드시 지킬 것**
+- 얼굴이 알아볼 수 있게 나온 사진은 쓰지 않습니다 (초상권·개인정보)
+- 학생을 모델로 쓰지 않습니다. 꼭 필요하면 본인·보호자 동의를 먼저 받으세요
+- 직접 제작했거나 상업적 이용이 가능한 이미지만 씁니다
+- **자세가 틀린 이미지는 글 설명보다 위험합니다. 확신이 없으면 넣지 마세요**
+
 ## 문서
 
 | 문서 | 내용 |
@@ -89,6 +109,7 @@
 | [docs/SAFETY_POLICY.md](docs/SAFETY_POLICY.md) | **안전 정책 — 다른 모든 요구사항보다 우선** |
 | [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) | 운동·영양 콘텐츠 작성 규칙, Phase 정의, 검수 체크리스트 |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 마일스톤 M0~M8, 단계별 체크리스트, 리스크 |
+| [docs/IMAGE_LIST.md](docs/IMAGE_LIST.md) | 동작 이미지 86개 제작 목록 (자동 생성) |
 
 ---
 

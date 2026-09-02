@@ -13,3 +13,5 @@ export { WebStorageNotice, WEB_STORAGE_MESSAGE } from './WebStorageNotice';
 export { LoadingScreen } from './LoadingScreen';
 export { EmptyState } from './EmptyState';
 export { ErrorBoundary } from './ErrorBoundary';
+export { BodyDiagram } from './BodyDiagram';
+export { ExerciseFigure } from './ExerciseFigure';
