@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "리커버핏 Coach",
+    "slug": "recovery-coach",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "recoverfit",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F9F8"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.recoverfit.coach"
+    },
+    "android": {
+      "package": "com.recoverfit.coach",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F2EF",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

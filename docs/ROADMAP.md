@@ -20,9 +20,9 @@
 
 | # | 마일스톤 | 결과물 | 상태 |
 |---|---|---|---|
-| M0 | 기획 문서 확정 | docs/ 5종 + 전문가 검수 | 🟡 진행 중 |
-| M1 | 프로젝트 셋업 | 빌드되는 빈 앱 + 테마 | ⬜ |
-| M2 | 안전 레이어 | 동의·스크리닝·차단 화면 | ⬜ |
+| M0 | 기획 문서 확정 | docs/ 5종 + 전문가 검수 | 🟡 문서 완료 / 검수 대기 |
+| M1 | 프로젝트 셋업 | 빌드되는 빈 앱 + 테마 | ✅ 완료 |
+| M2 | 안전 레이어 | 동의·스크리닝·차단 화면 | 🔜 다음 |
 | M3 | 설문 & 룰 엔진 | 설문 완주 → 결과 산출 | ⬜ |
 | M4 | 콘텐츠 & 루틴 실행 | 실제로 운동을 따라 할 수 있음 | ⬜ |
 | M5 | 영양 & 기록 & 설정 | 앱 전체 흐름 완결 | ⬜ |
@@ -57,17 +57,18 @@
 **목표**: 실기기에서 실행되는 빈 앱 + 디자인 토큰.
 
 ### 체크리스트
-- [ ] Expo + TypeScript 프로젝트 생성
-- [ ] `.gitignore` 설정 (`node_modules`, `.expo`, `.env` 제외 확인)
-- [ ] GitHub 저장소 연결 + 첫 커밋 + push
-- [ ] Expo Router 도입, `app/` 폴더 구조 생성
-- [ ] React Native Paper 설치 + 테마 연결
-- [ ] `src/theme/` (colors, typography, spacing)
-- [ ] `src/types/` 도메인 타입 작성
-- [ ] AsyncStorage 설치 + `src/storage/` 래퍼
-- [ ] ESLint / Prettier / `tsconfig strict`
-- [ ] Jest 설정 + 더미 테스트 1개 통과
-- [ ] Expo Go 실기기 실행 확인 (iOS/Android 각 1회)
+- [x] Expo + TypeScript 프로젝트 생성 (SDK 57)
+- [x] `.gitignore` 설정 (`node_modules`, `.expo`, `.env` 제외 확인)
+- [x] GitHub 저장소 연결 + 첫 커밋 + push
+- [x] Expo Router 도입, `app/` 폴더 구조 생성 (22개 라우트)
+- [x] React Native Paper 설치 + 테마 연결
+- [x] `src/theme/` (colors, typography, spacing, paperTheme)
+- [x] `src/types/` 도메인 타입 작성
+- [x] AsyncStorage 설치 + `src/storage/` 래퍼 + repository 3종
+- [x] ESLint / Prettier / `tsconfig strict`
+- [x] Jest 설정 + 테스트 14개 통과
+- [x] 웹 번들 빌드 및 렌더링 확인 (진입 분기 → 온보딩/홈)
+- [ ] Expo Go 실기기 실행 확인 (iOS/Android 각 1회) — 직접 확인 필요
 
 ### 완료 기준
 > 폰에서 앱을 열면 홈 화면이 뜨고, 테마 색이 적용되어 있다.
