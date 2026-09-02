@@ -2,7 +2,13 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { EXERCISES } from '@/data/exercises';
-import { EXERCISE_VIDEOS, buildSearchUrl, getExerciseVideo } from '@/data/exerciseVideos';
+import {
+  EXERCISE_VIDEOS,
+  buildSearchUrl,
+  getExerciseVideos,
+  registeredVideoCount,
+  totalVideoCount,
+} from '@/data/exerciseVideos';
 
 const ROOT = join(__dirname, '..', '..', '..');
 const read = (rel: string) => readFileSync(join(ROOT, rel), 'utf8');
@@ -13,8 +19,8 @@ const read = (rel: string) => readFileSync(join(ROOT, rel), 'utf8');
  */
 
 describe('영상이 없어도 앱은 동작한다', () => {
-  it('등록되지 않은 운동은 null 을 돌려준다', () => {
-    expect(getExerciseVideo('없는-운동')).toBeNull();
+  it('등록되지 않은 운동은 빈 목록을 돌려준다', () => {
+    expect(getExerciseVideos('없는-운동')).toEqual([]);
   });
 
   it('모든 운동에 대해 검색 링크를 만들 수 있다', () => {
@@ -39,16 +45,27 @@ describe('등록한 영상은 형식이 맞아야 한다', () => {
   });
 
   it('유튜브 링크만 등록할 수 있다', () => {
-    const bad = Object.entries(EXERCISE_VIDEOS).filter(
-      ([, v]) => !/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(v.url),
-    );
+    const bad = Object.values(EXERCISE_VIDEOS)
+      .flat()
+      .filter((v) => !/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(v.url));
     expect(bad).toEqual([]);
   });
 
   it('제목과 출처가 비어 있지 않다', () => {
-    for (const [id, video] of Object.entries(EXERCISE_VIDEOS)) {
-      expect(video.title.length).toBeGreaterThan(0);
-      expect(video.source.length).toBeGreaterThan(0);
+    for (const [id, videos] of Object.entries(EXERCISE_VIDEOS)) {
+      expect(id.length).toBeGreaterThan(0);
+      expect(videos.length).toBeGreaterThan(0);
+      for (const video of videos) {
+        expect(video.title.length).toBeGreaterThan(0);
+        expect(video.source.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('같은 링크가 중복 등록되지 않는다', () => {
+    for (const [id, videos] of Object.entries(EXERCISE_VIDEOS)) {
+      const urls = videos.map((v) => v.url);
+      expect(new Set(urls).size).toBe(urls.length);
       expect(id.length).toBeGreaterThan(0);
     }
   });
@@ -62,10 +79,11 @@ describe('영상은 앱 안에서 재생하지 않는다 (저작권)', () => {
     expect(component).toContain('window.open');
   });
 
-  it('영상을 앱 안에 담는 코드가 없다', () => {
-    expect(component).not.toContain('WebView');
-    expect(component).not.toContain('iframe');
-    expect(component).not.toContain('<Video');
+  it('앱 안에서 재생하는 라이브러리를 쓰지 않는다', () => {
+    // 영상을 앱 안에서 재생하면 저작권 문제가 생긴다. 링크로만 연다.
+    for (const forbidden of ['WebView', 'iframe', 'react-native-video', 'expo-av', 'expo-video']) {
+      expect(component).not.toContain(forbidden);
+    }
   });
 
   it('원작자 채널에서 재생된다는 안내가 있다', () => {
@@ -86,6 +104,39 @@ describe('안전 안내가 화면에 남아 있다', () => {
 
   it('영상과 글 설명이 다르면 글 설명을 따르라고 안내한다', () => {
     expect(component).toContain('글 설명과 자세가 다르면 글 설명을 따라');
+  });
+});
+
+describe('검수를 통과한 영상만 등록되어 있다', () => {
+  /** 2026-09-02 검수표에서 X 판정을 받은 링크 */
+  const REJECTED_URLS = [
+    'https://www.youtube.com/watch?v=5TUK4uT2nnw',
+    'https://www.youtube.com/watch?v=mzTKLYET6QA',
+    'https://www.youtube.com/watch?v=m06ilKpj87g',
+    'https://www.youtube.com/watch?v=iwiVVQ22vqw',
+    'https://www.youtube.com/watch?v=tNLINRNEQtM',
+    'https://www.youtube.com/watch?v=4j0vN1WEIyg',
+  ];
+
+  it('X 판정을 받은 링크는 등록되어 있지 않다', () => {
+    const registered = Object.values(EXERCISE_VIDEOS)
+      .flat()
+      .map((v) => v.url);
+    const leaked = REJECTED_URLS.filter((url) => registered.includes(url));
+    expect(leaked).toEqual([]);
+  });
+
+  it('검수를 통과한 링크 22개가 운동 9개에 등록되어 있다', () => {
+    expect(totalVideoCount()).toBe(22);
+    expect(registeredVideoCount()).toBe(9);
+  });
+
+  it('턱 당기기에는 반대 견해를 다루는 영상도 함께 들어 있다', () => {
+    // 이 동작은 모두에게 맞지는 않다는 견해가 있어, 한쪽 영상만 보고
+    // 따라 하지 않도록 여러 관점을 나란히 보여 준다
+    const videos = getExerciseVideos('neck-p1-01');
+    expect(videos.length).toBeGreaterThanOrEqual(3);
+    expect(videos.some((v) => v.note?.includes('모두에게 맞지는 않다'))).toBe(true);
   });
 });
 

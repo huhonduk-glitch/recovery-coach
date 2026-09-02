@@ -20,18 +20,25 @@ for (const file of readdirSync(EXERCISE_DIR).sort()) {
 
 const source = readFileSync(REGISTRY, 'utf8');
 const body = source.split('export const EXERCISE_VIDEOS')[1] ?? '';
-const entries = [...body.matchAll(/'([\w-]+)':\s*\{[\s\S]*?url:\s*'([^']+)'/g)].map((m) => ({
-  id: m[1],
-  url: m[2],
-}));
+
+// 'exercise-id': [ { url: '...' }, { url: '...' } ] 형태를 읽는다
+const entries = [];
+for (const block of [...body.matchAll(/'([\w-]+)':\s*\[([\s\S]*?)\n  \],/g)]) {
+  const id = block[1];
+  for (const url of [...block[2].matchAll(/url:\s*'([^']+)'/g)]) {
+    entries.push({ id, url: url[1] });
+  }
+}
 
 const validIds = new Set(ids);
 const unknown = entries.filter((e) => !validIds.has(e.id));
 const badUrl = entries.filter((e) => !/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(e.url));
 
+const withVideo = new Set(entries.map((e) => e.id));
 console.log(`\n운동 ${ids.length}개`);
-console.log(`  영상 등록됨  ${entries.length}개`);
-console.log(`  아직 없음    ${ids.length - entries.length}개\n`);
+console.log(`  영상이 있는 운동  ${withVideo.size}개`);
+console.log(`  등록된 링크       ${entries.length}개`);
+console.log(`  아직 없는 운동    ${ids.length - withVideo.size}개\n`);
 
 let failed = false;
 
