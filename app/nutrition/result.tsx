@@ -117,6 +117,42 @@ export default function NutritionResultScreen() {
         </Card>
       ) : null}
 
+      {/* 체중 기준 단백질 목표. 체중을 입력하지 않았으면 g 수는 계산하지 않는다 */}
+      <Card title="하루 단백질 목표" accent={colors.primary}>
+        <Text style={styles.proteinPerKg}>
+          체중 1kg 당 {formatG(rec.proteinTarget.perKgMin)}~{formatG(rec.proteinTarget.perKgMax)}g
+        </Text>
+
+        {rec.proteinTarget.dailyGramsMin !== null && rec.proteinTarget.dailyGramsMax !== null ? (
+          <>
+            <Text style={styles.proteinGrams}>
+              하루 {rec.proteinTarget.dailyGramsMin}~{rec.proteinTarget.dailyGramsMax}g
+            </Text>
+            <Text style={styles.item}>
+              달걀 1개 약 6g, 닭가슴살 100g 약 23g, 두부 반 모 약 10g, 우유 200ml 약 6g 정도입니다.
+            </Text>
+          </>
+        ) : (
+          <Text style={styles.item}>
+            설문에서 체중을 알려 주시면 하루 목표 g 까지 계산해 드려요. 지금은 위 손 기준으로만 챙겨도
+            충분합니다.
+          </Text>
+        )}
+
+        {student ? (
+          <Text style={styles.studentNote}>
+            성장기에는 총량을 정확히 맞추는 것보다 매 끼니에 단백질 반찬을 하나씩 두는 것이 더
+            중요합니다. 숫자에 얽매이지 마세요.
+          </Text>
+        ) : null}
+
+        <Text style={styles.sourceNote}>{rec.proteinTarget.source}</Text>
+        <Text style={styles.sourceNote}>
+          영양 전문가 검수 전 기준값입니다. 신장 질환 등 단백질 섭취를 조절해야 하는 상태라면 반드시
+          담당 전문가와 상의하세요.
+        </Text>
+      </Card>
+
       <Card title="이렇게 먹어 보세요">
         {plan.mainPrinciples.map((p) => (
           <Text key={p} style={styles.item}>
@@ -162,6 +198,10 @@ export default function NutritionResultScreen() {
   );
 }
 
+function formatG(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
 function Macro({
   label,
   min,
@@ -195,6 +235,14 @@ const styles = StyleSheet.create({
   macroLabel: { ...typography.small, color: colors.textMuted },
   macroValue: { ...typography.bodyStrong, color: colors.text, marginTop: spacing.xxs },
   macroNote: { ...typography.caption, color: colors.textDisabled, marginTop: spacing.md },
+  proteinPerKg: { ...typography.body, color: colors.textMuted },
+  proteinGrams: {
+    ...typography.heading,
+    color: colors.primaryText,
+    marginTop: spacing.xxs,
+    marginBottom: spacing.sm,
+  },
+  sourceNote: { ...typography.caption, color: colors.textDisabled, marginTop: spacing.sm },
   mealRow: { flexDirection: 'row', marginBottom: spacing.sm },
   mealSlot: { ...typography.bodyStrong, color: colors.primary, width: 64 },
   mealItems: { ...typography.body, color: colors.text, flex: 1 },

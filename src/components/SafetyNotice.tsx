@@ -6,7 +6,7 @@ type Tone = 'info' | 'warning' | 'danger';
 
 interface Props {
   title?: string;
-  items?: string[];
+  items?: readonly string[];
   text?: string;
   tone?: Tone;
 }

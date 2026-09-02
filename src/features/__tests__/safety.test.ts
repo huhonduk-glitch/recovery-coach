@@ -44,10 +44,10 @@ describe('시나리오 9 — 운동 중 통증 조정', () => {
 });
 
 describe('시나리오 10 — 라우트 우회 차단', () => {
-  const FRESH = { consentValid: false, hasAssessment: false, blocked: false };
-  const CONSENTED = { consentValid: true, hasAssessment: false, blocked: false };
-  const BLOCKED = { consentValid: true, hasAssessment: true, blocked: true };
-  const OK = { consentValid: true, hasAssessment: true, blocked: false };
+  const FRESH = { consentValid: false, privacyValid: false, hasAssessment: false, blocked: false };
+  const CONSENTED = { consentValid: true, privacyValid: true, hasAssessment: false, blocked: false };
+  const BLOCKED = { consentValid: true, privacyValid: true, hasAssessment: true, blocked: true };
+  const OK = { consentValid: true, privacyValid: true, hasAssessment: true, blocked: false };
 
   it.each([['(tabs)', 'index'], ['workout', 'player'], ['nutrition', 'result']])(
     '동의 전에는 %s/%s 에 갈 수 없다',

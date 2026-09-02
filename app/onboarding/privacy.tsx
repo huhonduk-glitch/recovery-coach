@@ -10,24 +10,23 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, OptionButton, WebStorageNotice } from '@/components';
-import { consentStorage } from '@/features/assessment/assessmentStorage';
+import { Button, OptionButton, SafetyNotice } from '@/components';
+import { privacyStorage } from '@/features/assessment/assessmentStorage';
 import { colors, radius, spacing, typography } from '@/theme';
-import { DISCLAIMER_FULL, DISCLAIMER_VERSION } from '@/utils/safety';
+import { PRIVACY_MINOR_NOTICE, PRIVACY_NOTICE, PRIVACY_VERSION } from '@/utils/privacy';
 
-/** 스크롤이 바닥 근처에 닿았는지 (여유 24px) */
 function isAtBottom(e: NativeSyntheticEvent<NativeScrollEvent>): boolean {
   const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
   return layoutMeasurement.height + contentOffset.y >= contentSize.height - 24;
 }
 
 /**
- * 안전 안내 및 동의.
+ * 개인정보 수집·이용 동의.
  *
- * 끝까지 읽어야 동의할 수 있다. 건너뛰기 버튼을 두지 않는다.
- * (docs/SAFETY_POLICY.md §8)
+ * 안전 안내 동의 다음에 나온다. 끝까지 읽어야 동의할 수 있다.
+ * ⚠️ 문구는 법률 검토 전이다. (docs/SAFETY_POLICY.md §9.3)
  */
-export default function SafetyConsentScreen() {
+export default function PrivacyConsentScreen() {
   const insets = useSafeAreaInsets();
   const [readToEnd, setReadToEnd] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -35,8 +34,8 @@ export default function SafetyConsentScreen() {
 
   async function handleAgree() {
     setSaving(true);
-    await consentStorage.save(DISCLAIMER_VERSION);
-    router.replace('/onboarding/privacy');
+    await privacyStorage.save(PRIVACY_VERSION);
+    router.replace('/assessment');
   }
 
   return (
@@ -49,20 +48,25 @@ export default function SafetyConsentScreen() {
         }}
         scrollEventThrottle={64}
       >
-        <Text style={styles.title}>이용 전 확인해 주세요</Text>
+        <Text style={styles.title} accessibilityRole="header">
+          개인정보 수집·이용 동의
+        </Text>
         <Text style={styles.subtitle}>
-          아래 내용을 끝까지 읽으신 뒤 동의해 주세요. 이 앱이 무엇을 하지 않는지가 특히
-          중요합니다.
+          어떤 내용을 받고, 어디에 저장되는지 알려 드립니다. 끝까지 읽어 주세요.
         </Text>
 
-        {DISCLAIMER_FULL.map((line, index) => (
-          <View key={line} style={styles.item}>
-            <Text style={styles.itemNumber}>{index + 1}</Text>
-            <Text style={styles.itemText}>{line}</Text>
+        {PRIVACY_NOTICE.map((section) => (
+          <View key={section.title} style={styles.card}>
+            <Text style={styles.cardTitle}>{section.title}</Text>
+            {section.lines.map((line) => (
+              <Text key={line} style={styles.cardLine}>
+                · {line}
+              </Text>
+            ))}
           </View>
         ))}
 
-        <WebStorageNotice />
+        <SafetyNotice tone="info" text={PRIVACY_MINOR_NOTICE} />
 
         <Text style={styles.endMark}>여기까지가 안내 전문입니다.</Text>
       </ScrollView>
@@ -71,7 +75,7 @@ export default function SafetyConsentScreen() {
         {!readToEnd ? <Text style={styles.hint}>내용을 끝까지 내려서 읽어 주세요.</Text> : null}
 
         <OptionButton
-          label="위 내용을 확인했습니다"
+          label="위 내용을 확인했고, 동의합니다"
           multi
           selected={checked}
           onPress={() => {
@@ -80,7 +84,7 @@ export default function SafetyConsentScreen() {
         />
 
         <Button
-          label="동의하고 다음으로"
+          label="동의하고 설문 시작하기"
           onPress={handleAgree}
           disabled={!readToEnd || !checked}
           loading={saving}
@@ -96,27 +100,21 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
   title: { ...typography.heading, color: colors.text, marginBottom: spacing.sm },
   subtitle: { ...typography.body, color: colors.textMuted, marginBottom: spacing.xl },
-  item: {
-    flexDirection: 'row',
+  card: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     padding: spacing.lg,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
-  itemNumber: {
-    ...typography.bodyStrong,
-    color: colors.primary,
-    marginRight: spacing.md,
-    minWidth: 16,
-  },
-  itemText: { ...typography.body, color: colors.text, flex: 1 },
+  cardTitle: { ...typography.bodyStrong, color: colors.primary, marginBottom: spacing.sm },
+  cardLine: { ...typography.body, color: colors.text, marginBottom: spacing.xxs },
   endMark: {
     ...typography.small,
     color: colors.textMuted,
     textAlign: 'center',
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
   },
   footer: {
     borderTopWidth: 1,

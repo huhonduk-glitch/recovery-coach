@@ -144,14 +144,26 @@ describe('저작권 규칙이 문서에 남아 있다', () => {
   it.each([
     ['docs/VIDEO_GUIDE.md', '링크는 되고, 파일은 안 됩니다'],
     ['docs/VIDEO_GUIDE.md', '조회수 순으로 고르지 마세요'],
-    ['docs/VIDEO_CANDIDATES.md', '아직 검수하지 않은 후보'],
+    ['docs/VIDEO_CANDIDATES.md', '외부 전문가 검수를 받은 것이 아닙니다'],
     ['src/data/exerciseVideos.ts', '저작권 침해입니다'],
   ])('%s 에 "%s" 안내가 있다', (file, phrase) => {
     expect(read(file)).toContain(phrase);
   });
 
-  it('후보 목록이 조회수를 확인하지 못했다고 밝힌다', () => {
+  it('점검 결과가 조회수를 확인하지 못했다고 밝힌다', () => {
     expect(read('docs/VIDEO_CANDIDATES.md')).toContain('조회수·댓글 수를 확인하지 못했습니다');
+  });
+
+  it('제외한 링크가 코드에서도 막혀 있다', () => {
+    const rejected = read('src/features/videos/videoTypes.ts');
+    const doc = read('docs/VIDEO_CANDIDATES.md');
+    const ids = [...rejected.matchAll(/'([A-Za-z0-9_-]{11})',/g)].map((m) => m[1]);
+    expect(ids.length).toBeGreaterThanOrEqual(6);
+    for (const id of ids) {
+      // 제외 목록에 적힌 영상은 기본 등록표에 남아 있으면 안 된다
+      expect(read('src/data/exerciseVideos.ts')).not.toContain(id as string);
+      expect(doc).toContain(id as string);
+    }
   });
 });
 

@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Card, Screen } from '@/components';
 import { PROGRAMS } from '@/data/programs';
 import type { ExerciseCategory } from '@/features/exercise/exerciseTypes';
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, MIN_TOUCH_SIZE, radius, spacing, typography } from '@/theme';
 
 /** 운동 탭 — 카테고리별 프로그램 목록 */
 
@@ -41,6 +41,22 @@ export default function WorkoutTabScreen() {
       <Text style={styles.subtitle}>
         회복운동은 1단계부터 순서대로 진행합니다. 단계를 건너뛰지 마세요.
       </Text>
+
+      {/* 운동 지침과 부위별 손상 이해로 가는 입구 */}
+      <Pressable
+        onPress={() => router.push('/learn')}
+        accessibilityRole="button"
+        accessibilityLabel="알아보기. 운동 지침과 부위별 손상"
+        style={({ pressed }) => [styles.learnRow, pressed && styles.learnPressed]}
+      >
+        <View style={styles.learnBody}>
+          <Text style={styles.learnTitle}>알아보기</Text>
+          <Text style={styles.learnDesc}>
+            얼마나 움직여야 하는지, 부위별로 어떤 손상이 흔한지 정리했어요.
+          </Text>
+        </View>
+        <Text style={styles.learnArrow}>›</Text>
+      </Pressable>
 
       <View style={styles.tabs}>
         {CATEGORY_GROUPS.map((g) => {
@@ -80,6 +96,20 @@ export default function WorkoutTabScreen() {
 }
 
 const styles = StyleSheet.create({
+  learnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: MIN_TOUCH_SIZE,
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  learnPressed: { opacity: 0.8 },
+  learnBody: { flex: 1 },
+  learnTitle: { ...typography.bodyStrong, color: colors.primaryDark },
+  learnDesc: { ...typography.caption, color: colors.primaryDark, marginTop: spacing.xxs },
+  learnArrow: { ...typography.title, color: colors.primaryDark },
   title: { ...typography.heading, color: colors.text, marginBottom: spacing.sm },
   subtitle: { ...typography.body, color: colors.textMuted, marginBottom: spacing.lg },
   tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },

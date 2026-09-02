@@ -1,7 +1,9 @@
 import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { buildSearchUrl, getExerciseVideos, type ExerciseVideo } from '@/data/exerciseVideos';
+import { buildSearchUrl, type ExerciseVideo } from '@/data/exerciseVideos';
 import type { Exercise } from '@/features/exercise/exerciseTypes';
+import { resolveVideos } from '@/features/videos/videoLibrary';
+import { useVideoOverrides } from '@/features/videos/useVideoOverrides';
 import { colors, MIN_TOUCH_SIZE, radius, spacing, typography } from '@/theme';
 
 import { Button } from './Button';
@@ -31,9 +33,14 @@ async function openUrl(url: string) {
  *
  * 한 동작에 영상이 여러 개일 수 있다. 시연 영상과 함께 '흔한 실수' 나
  * 다른 견해를 다루는 영상을 나란히 보여 주기 위해서다.
+ *
+ * 목록은 기본 등록표(src/data/exerciseVideos.ts)를 쓰되,
+ * 사용자가 앱에서 바꿨으면 바꾼 목록을 쓴다.
  */
 export function ExerciseVideoLink({ exercise }: { exercise: Exercise }) {
-  const videos = getExerciseVideos(exercise.id);
+  // 앱 안에서 영상 목록을 바꿨다면 그 목록을 쓴다 (내정보 > 동작 영상 관리)
+  const overrides = useVideoOverrides();
+  const videos = resolveVideos(overrides, exercise.id);
   const regionLabel = exercise.bodyRegion ? REGION_LABEL[exercise.bodyRegion] : null;
 
   if (videos.length === 0) {

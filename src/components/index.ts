@@ -14,5 +14,7 @@ export { LoadingScreen } from './LoadingScreen';
 export { EmptyState } from './EmptyState';
 export { ErrorBoundary } from './ErrorBoundary';
 export { BodyDiagram } from './BodyDiagram';
+export { AnatomyDiagram } from './AnatomyDiagram';
 export { ExerciseFigure } from './ExerciseFigure';
 export { ExerciseVideoLink } from './ExerciseVideoLink';
+export { WeightInput } from './WeightInput';

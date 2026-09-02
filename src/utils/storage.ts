@@ -11,17 +11,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const STORAGE_KEYS = {
   consent: '@rfc/consent',
+  privacy: '@rfc/privacy',
   assessment: '@rfc/assessment',
   recommendation: '@rfc/recommendation',
   workoutLogs: '@rfc/workoutLogs',
   dailyChecks: '@rfc/dailyChecks',
   settings: '@rfc/settings',
+  videoOverrides: '@rfc/videoOverrides',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 
-/** '내 데이터 전체 삭제' 대상 */
-export const ALL_STORAGE_KEYS: readonly StorageKey[] = Object.values(STORAGE_KEYS);
+/**
+ * '내 데이터 전체 삭제' 대상.
+ *
+ * videoOverrides 는 뺀다. 그것은 건강 정보가 아니라 선생님이 직접 만든 영상 목록이라,
+ * 설문·기록을 지운다고 함께 사라지면 곤란하다. (영상 관리 화면에서 따로 되돌린다)
+ */
+export const ALL_STORAGE_KEYS: readonly StorageKey[] = [
+  STORAGE_KEYS.consent,
+  STORAGE_KEYS.privacy,
+  STORAGE_KEYS.assessment,
+  STORAGE_KEYS.recommendation,
+  STORAGE_KEYS.workoutLogs,
+  STORAGE_KEYS.dailyChecks,
+  STORAGE_KEYS.settings,
+];
 
 export async function getJSON<T>(key: StorageKey, fallback: T): Promise<T> {
   try {

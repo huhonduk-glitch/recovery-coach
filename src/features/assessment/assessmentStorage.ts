@@ -38,6 +38,30 @@ export const consentStorage = {
   },
 };
 
+/** 개인정보 수집·이용 동의 */
+export const privacyStorage = {
+  async get(): Promise<ConsentRecord> {
+    return getJSON<ConsentRecord>(STORAGE_KEYS.privacy, EMPTY_CONSENT);
+  },
+
+  async save(version: number): Promise<void> {
+    await setJSON<ConsentRecord>(STORAGE_KEYS.privacy, {
+      agreed: true,
+      version,
+      agreedAt: new Date().toISOString(),
+    });
+  },
+
+  async isValid(currentVersion: number): Promise<boolean> {
+    const c = await this.get();
+    return c.agreed && c.version >= currentVersion;
+  },
+
+  async clear(): Promise<void> {
+    return removeKey(STORAGE_KEYS.privacy);
+  },
+};
+
 export const assessmentStorage = {
   async get(): Promise<Assessment | null> {
     return getJSON<Assessment | null>(STORAGE_KEYS.assessment, null);

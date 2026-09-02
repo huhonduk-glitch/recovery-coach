@@ -283,8 +283,20 @@ npm run review:workbook
 | 운동 중 중단 기준 | 통증 6점 이상 | 기획 단계에서 정한 값 |
 | 탄단지 비율 | `mealTemplates.ts` | 기획 단계에서 정한 값 |
 | 운동 동작 선택과 단계 배치 | `src/data/exercises/` | 기획 단계에서 정한 구성 |
+| 체중당 단백질 g/kg | `mealTemplates.ts` | 2026-09-02 사용자 지정값. ISSN 지침 참고 |
+| 부위별 손상 설명 | `injuryEducation.ts` | 일반적으로 알려진 내용. **의료 전문가 검수 전** |
+| 유연성·균형 운동 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
+| 청소년 활동량 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
+| 개인정보 수집·이용 안내문 | `src/utils/privacy.ts` | **법률 검토 전** |
 
 기준값은 `src/features/assessment/assessmentEngine.ts` 상단 상수 한 곳에 모여 있어,
 검수 결과가 나오면 그 파일만 고치면 됩니다.
+
+운동 지침(`activityGuidelines.ts`)은 항목마다 `verified` 표시가 있습니다.
+`verified: false` 인 항목은 앱 화면에도 **'확인 필요'** 라고 그대로 나옵니다.
+확인하지 못한 것을 확인한 것처럼 쓰지 않기 위해서입니다.
+
+동작 영상 목록은 2026-09-02에 **앱 제작자 본인이 자체 점검**한 것이며,
+외부 전문가 검수를 받은 것이 아닙니다. ([docs/VIDEO_CANDIDATES.md](docs/VIDEO_CANDIDATES.md))
 
 미확정 항목 전체 목록은 [docs/CONTENT_GUIDE.md §9](docs/CONTENT_GUIDE.md) 참고.

@@ -2,10 +2,15 @@ import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 import { LoadingScreen } from '@/components/LoadingScreen';
-import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
+import {
+  assessmentStorage,
+  consentStorage,
+  privacyStorage,
+} from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
 import { resolveGateRoute, type GateRoute } from '@/features/assessment/routeGuard';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
+import { PRIVACY_VERSION } from '@/utils/privacy';
 
 /**
  * 앱 진입 분기.
@@ -20,8 +25,9 @@ export default function EntryScreen() {
     let cancelled = false;
 
     (async () => {
-      const [consentValid, assessment, recommendation] = await Promise.all([
+      const [consentValid, privacyValid, assessment, recommendation] = await Promise.all([
         consentStorage.isValid(DISCLAIMER_VERSION),
+        privacyStorage.isValid(PRIVACY_VERSION),
         assessmentStorage.get(),
         loadRecommendation(),
       ]);
@@ -31,6 +37,7 @@ export default function EntryScreen() {
       setTarget(
         resolveGateRoute({
           consentValid,
+          privacyValid,
           hasAssessment: assessment !== null,
           blocked: recommendation?.riskLevel === 'red',
         }),

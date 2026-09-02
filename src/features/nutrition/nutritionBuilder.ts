@@ -4,7 +4,30 @@ import { filterFoodsByAllergies } from '@/data/nutritionFoods';
 import type { Assessment } from '../assessment/assessmentTypes';
 
 import { decideNutritionGoal, shouldHideMacroNumbers } from './nutritionRules';
-import type { NutritionMission, NutritionRecommendation } from './nutritionTypes';
+import type {
+  NutritionMission,
+  NutritionRecommendation,
+  ProteinPerKg,
+  ProteinTarget,
+} from './nutritionTypes';
+
+/**
+ * 체중을 알면 하루 단백질 목표를 계산한다.
+ *
+ * 체중을 입력하지 않았으면 계산하지 않고, 화면은 손 기준 안내만 보여 준다.
+ * ⚠️ 기준값은 전문가 검수 전이다. 근거는 source 에 담아 화면에도 표시한다.
+ */
+function buildProteinTarget(perKg: ProteinPerKg, weightKg: number | undefined): ProteinTarget {
+  const hasWeight = typeof weightKg === 'number' && weightKg > 0;
+
+  return {
+    perKgMin: perKg.min,
+    perKgMax: perKg.max,
+    dailyGramsMin: hasWeight ? Math.round(weightKg * perKg.min) : null,
+    dailyGramsMax: hasWeight ? Math.round(weightKg * perKg.max) : null,
+    source: perKg.source,
+  };
+}
 
 /**
  * 설문 응답을 오늘의 영양 가이드로 바꾼다.
@@ -91,6 +114,7 @@ export function buildNutritionRecommendation(assessment: Assessment): NutritionR
     title: plan.title,
     // 학생 모드에서는 비율 숫자를 아예 만들지 않는다 (화면에서 숨기는 방식 금지)
     macroRatio: hideNumbers ? null : plan.macroRatio,
+    proteinTarget: buildProteinTarget(plan.proteinPerKg, assessment.weightKg),
     handPortionGuide: [...HAND_PORTION_GUIDE],
     missions: buildMissions(assessment),
     recommendedFoods: safeFoods,
