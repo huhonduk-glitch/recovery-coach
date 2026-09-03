@@ -105,6 +105,22 @@ export default function SettingsTabScreen() {
         />
       </Card>
 
+      <Card title="운동·프로그램 편집">
+        <Text style={styles.desc}>
+          동작 설명과 코칭 문구를 선생님 표현으로 바꾸고, 세트·횟수와 프로그램 편성까지 직접
+          정하실 수 있어요. 고친 내용은 앱 전체에 바로 반영됩니다.
+        </Text>
+        <Text style={styles.note}>
+          주의사항과 중단 기준은 비울 수 없고, 통증을 참으라는 표현은 저장되지 않습니다.
+        </Text>
+        <Button
+          label="운동·프로그램 편집하기"
+          variant="outline"
+          onPress={() => router.push('/editor')}
+          style={styles.button}
+        />
+      </Card>
+
       <Card title="동작 영상 관리">
         <Text style={styles.desc}>
           동작마다 연결된 영상을 직접 추가하고, 순서를 바꾸고, 지울 수 있어요. 앱은 주소만
@@ -148,8 +164,8 @@ export default function SettingsTabScreen() {
           지금까지의 설문 응답과 운동 기록을 모두 지웁니다. 되돌릴 수 없습니다.
         </Text>
         <Text style={styles.note}>
-          직접 등록하신 동작 영상 목록은 지워지지 않아요. 그것은 영상 관리 화면에서 따로
-          되돌릴 수 있습니다.
+          직접 등록하신 영상 목록과 편집한 운동·프로그램은 지워지지 않아요. 각 관리 화면에서
+          따로 되돌릴 수 있습니다.
         </Text>
         <Button label="전체 삭제" variant="danger" onPress={confirmDelete} style={styles.button} />
       </Card>

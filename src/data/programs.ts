@@ -1,5 +1,7 @@
 import type { Program } from '@/features/exercise/exerciseTypes';
 
+import { overriddenProgram, withProgramOverrides } from './libraryOverrides';
+
 /**
  * 프로그램 템플릿.
  *
@@ -434,6 +436,16 @@ export const PROGRAMS: readonly Program[] = [
 
 const PROGRAM_MAP = new Map(PROGRAMS.map((p) => [p.id, p]));
 
+/**
+ * 앱이 실제로 쓰는 프로그램 목록.
+ * PROGRAMS 는 코드에 들어 있는 기본 목록이고, 이 함수는 앱에서 고친 내용까지 얹는다.
+ */
+export function allPrograms(): Program[] {
+  return withProgramOverrides(PROGRAMS);
+}
+
 export function getProgram(id: string): Program | undefined {
-  return PROGRAM_MAP.get(id);
+  const edited = overriddenProgram(id);
+  if (edited === null) return undefined; // 앱에서 감춘 프로그램
+  return edited ?? PROGRAM_MAP.get(id);
 }

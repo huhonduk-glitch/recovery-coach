@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card, SafetyNotice, Screen } from '@/components';
-import { PROGRAMS } from '@/data/programs';
+import { allPrograms } from '@/data/programs';
 import { assessmentStorage } from '@/features/assessment/assessmentStorage';
 import { assessmentTrack, type TrackId } from '@/features/assessment/assessmentTypes';
 import { isCategoryAllowed } from '@/features/assessment/tracks';
+import { useLibrary } from '@/features/library/useLibrary';
 import type { ExerciseCategory } from '@/features/exercise/exerciseTypes';
 import { colors, MIN_TOUCH_SIZE, radius, spacing, typography } from '@/theme';
 
@@ -59,13 +60,16 @@ export default function WorkoutTabScreen() {
     [track],
   );
 
+  const library = useLibrary();
+
   const programs = useMemo(() => {
     const group = groups.find((g) => g.key === groupKey);
     if (!group) return [];
-    return PROGRAMS.filter(
+    void library; // 편집 내용이 바뀌면 목록을 다시 만든다
+    return allPrograms().filter(
       (p) => group.categories.includes(p.category) && isCategoryAllowed(track, p.category),
     );
-  }, [groups, groupKey, track]);
+  }, [groups, groupKey, track, library]);
 
   return (
     <Screen>

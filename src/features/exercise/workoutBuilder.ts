@@ -1,4 +1,4 @@
-import { EXERCISES } from '@/data/exercises';
+import { getExercise } from '@/data/exercises';
 import { getProgram } from '@/data/programs';
 
 import type { Assessment, Equipment } from '../assessment/assessmentTypes';
@@ -15,7 +15,7 @@ import type { Exercise, Program } from './exerciseTypes';
  * - 정렬은 프로그램에 정의된 순서를 그대로 쓴다 (무작위 섞기 금지)
  */
 
-const EXERCISE_MAP = new Map(EXERCISES.map((e) => [e.id, e]));
+
 
 /** 최소한 이 개수는 보장한다. 시간이 모자라도 루틴이 비지 않게 한다. */
 const MIN_EXERCISE_COUNT = 3;
@@ -55,8 +55,9 @@ export function buildWorkout(
   if (!program) return null;
 
   const notes: string[] = [];
+  // 앱에서 고친 내용이 루틴 조립에도 반영되도록 조회 함수를 쓴다
   const all = program.exerciseIds
-    .map((id) => EXERCISE_MAP.get(id))
+    .map((id) => getExercise(id))
     .filter((e): e is Exercise => e !== undefined);
 
   // 1) 장비 필터

@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Button, Card, SafetyNotice, Screen } from '@/components';
-import { EXERCISES } from '@/data/exercises';
+import { allExercises } from '@/data/exercises';
 import type { Exercise } from '@/features/exercise/exerciseTypes';
 import { customizedCount, isCustomized, resolveVideos } from '@/features/videos/videoLibrary';
 import { useVideoOverrides } from '@/features/videos/useVideoOverrides';
@@ -30,7 +30,7 @@ export default function VideoManagerScreen() {
 
   const rows = useMemo(() => {
     const q = keyword.trim();
-    return EXERCISES.map((exercise) => ({
+    return allExercises().map((exercise) => ({
       exercise,
       count: resolveVideos(overrides, exercise.id).length,
       customized: isCustomized(overrides, exercise.id),
@@ -47,7 +47,7 @@ export default function VideoManagerScreen() {
   }, [overrides, keyword, filter]);
 
   const withVideo = useMemo(
-    () => EXERCISES.filter((e) => resolveVideos(overrides, e.id).length > 0).length,
+    () => allExercises().filter((e) => resolveVideos(overrides, e.id).length > 0).length,
     [overrides],
   );
 
@@ -68,7 +68,7 @@ export default function VideoManagerScreen() {
 
       <Card title="현재 상태">
         <Text style={styles.stat}>
-          영상이 연결된 동작 {withVideo}개 / 전체 {EXERCISES.length}개
+          영상이 연결된 동작 {withVideo}개 / 전체 {allExercises().length}개
         </Text>
         <Text style={styles.statSub}>앱에서 직접 바꾼 동작 {customizedCount(overrides)}개</Text>
         <Button

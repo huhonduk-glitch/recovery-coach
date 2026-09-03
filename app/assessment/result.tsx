@@ -8,6 +8,7 @@ import { loadRecommendation } from '@/features/assessment/recommendationService'
 import type { Recommendation } from '@/features/assessment/recommendation';
 import { getExercise } from '@/data/exercises';
 import { formatDuration } from '@/features/exercise/workoutBuilder';
+import { useLibrary } from '@/features/library/useLibrary';
 import { colors, radius, spacing, typography } from '@/theme';
 import { DISCLAIMER_SHORT } from '@/utils/safety';
 
@@ -20,6 +21,8 @@ const RISK_COLOR = {
 
 /** 설문 결과 — 운동 추천 */
 export default function AssessmentResultScreen() {
+  // 앱에서 고친 운동·프로그램이 바뀌면 이 화면도 다시 그린다
+  useLibrary();
   const [rec, setRec] = useState<Recommendation | null>(null);
   const [studentMode, setStudentMode] = useState(false);
 

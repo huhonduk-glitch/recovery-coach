@@ -10,6 +10,7 @@ import {
   Screen,
 } from '@/components';
 import { getExercise } from '@/data/exercises';
+import { useLibrary } from '@/features/library/useLibrary';
 import { colors, radius, spacing, typography } from '@/theme';
 import { COMMON_STOP_SIGNS } from '@/utils/safety';
 
@@ -17,6 +18,8 @@ const LEVEL_LABEL = { beginner: '초급', intermediate: '중급', advanced: '상
 
 /** 운동 상세 — 앱만 보고 따라 할 수 있어야 한다 */
 export default function ExerciseDetailScreen() {
+  // 앱에서 고친 운동·프로그램이 바뀌면 이 화면도 다시 그린다
+  useLibrary();
   const { exerciseId } = useLocalSearchParams<{ exerciseId: string }>();
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
 
