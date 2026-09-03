@@ -20,6 +20,7 @@ import type { Exercise } from '@/features/exercise/exerciseTypes';
 import { buildWorkout } from '@/features/exercise/workoutBuilder';
 import { logStorage } from '@/features/logs/logStorage';
 import type { RPE, WorkoutLog } from '@/features/logs/logTypes';
+import { useLibrary } from '@/features/library/useLibrary';
 import { colors, radius, spacing, typography } from '@/theme';
 import { COMMON_STOP_SIGNS } from '@/utils/safety';
 
@@ -34,6 +35,8 @@ const RPE_VALUES: RPE[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
  * 운동 중 통증 체크는 언제든 누를 수 있다. (docs/SAFETY_POLICY.md §5)
  */
 export default function WorkoutPlayerScreen() {
+  // 앱에서 고친 운동·프로그램이 바뀌면 이 화면도 다시 그린다
+  useLibrary();
   const { programId } = useLocalSearchParams<{ programId: string }>();
   const program = programId ? getProgram(programId) : undefined;
 

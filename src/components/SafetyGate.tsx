@@ -7,6 +7,7 @@ import {
   privacyStorage,
 } from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
+import { ensureLibraryLoaded } from '@/features/library/useLibrary';
 
 import { LoadingScreen } from './LoadingScreen';
 import { isRouteAllowed, resolveGateRoute, type GateState } from '@/features/assessment/routeGuard';
@@ -46,6 +47,9 @@ export function SafetyGate({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     (async () => {
+      // 앱에서 고친 운동·프로그램을 조회 함수에 미리 얹어 둔다.
+      // 이걸 하지 않으면 새로고침 직후 화면마다 원래 내용이 나온다.
+      await ensureLibraryLoaded();
       const state = await readGateState();
       if (cancelled) return;
 

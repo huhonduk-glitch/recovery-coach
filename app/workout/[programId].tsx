@@ -10,11 +10,14 @@ import { assessmentStorage } from '@/features/assessment/assessmentStorage';
 import { decideExerciseLevel } from '@/features/assessment/assessmentEngine';
 import type { Exercise } from '@/features/exercise/exerciseTypes';
 import { buildWorkout, formatDuration } from '@/features/exercise/workoutBuilder';
+import { useLibrary } from '@/features/library/useLibrary';
 import { colors, spacing, typography } from '@/theme';
 import { COMMON_STOP_SIGNS } from '@/utils/safety';
 
 /** 프로그램 상세 — 운동 목록과 시작 버튼 */
 export default function ProgramDetailScreen() {
+  // 앱에서 고친 운동·프로그램이 바뀌면 이 화면도 다시 그린다
+  useLibrary();
   const { programId } = useLocalSearchParams<{ programId: string }>();
   const program = programId ? getProgram(programId) : undefined;
 
