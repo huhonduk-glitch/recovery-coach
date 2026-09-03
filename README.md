@@ -174,10 +174,33 @@ npm run web        # 개발 중 브라우저로 확인
 ```
 
 ### 웹으로 배포하기
+
+**주소**: https://huhonduk-glitch.github.io/recovery-coach/
+
+`main` 브랜치에 코드가 올라가면 `.github/workflows/deploy.yml` 이 자동으로 빌드해서
+위 주소에 올립니다. 직접 명령어를 칠 필요가 없습니다.
+
+> ⚠️ **이 주소는 링크를 아는 사람이면 누구나 열 수 있습니다.**
+> 앱 자체는 입력한 내용을 서버로 보내지 않고 각자의 기기에만 저장하므로,
+> 다른 사람이 열어도 내 설문 응답이나 기록은 보이지 않습니다.
+
+**처음 한 번만 해야 하는 설정** — 저장소 Settings → Pages → Source 를
+**"GitHub Actions"** 로 바꿔 주세요.
+(비공개 저장소에서 GitHub Pages 를 쓰려면 유료 요금제가 필요합니다.
+ 무료 계정이라면 저장소를 공개로 바꾸거나 Netlify·Vercel 같은 다른 호스팅을 쓰세요)
+
+직접 빌드해서 확인하려면
+
 ```bash
-npm run build:web  # dist/ 폴더에 정적 웹사이트 생성
-npm run serve:web  # 만들어진 결과를 로컬에서 확인
+npm run build:web        # 최상위 경로용 (로컬 확인용)
+npm run serve:web        # 만들어진 결과를 로컬에서 열어 보기
+
+npm run build:web:pages  # GitHub Pages 용 (/recovery-coach 하위 경로)
 ```
+
+두 명령의 차이는 **파일 주소 앞에 저장소 이름이 붙느냐**입니다.
+Pages 주소가 하위 경로라서, 그냥 `build:web` 결과를 올리면 화면이 하얗게 뜹니다.
+(`app.config.js` 와 `scripts/build-pages.mjs` 참고)
 
 `dist/` 폴더를 그대로 올리면 됩니다. GitHub Pages, Netlify, Vercel 등 정적 호스팅이면
 어디든 동작합니다. 빌드할 때 아래 파일이 함께 만들어집니다.
@@ -223,6 +246,8 @@ npm run images:check # 이미지 등록표 확인
 
 **빨간불이 떴을 때** — PR 화면에서 실패한 항목 이름을 누르면 어느 파일 몇 번째 줄에서
 무엇이 걸렸는지 그대로 나옵니다. 저장소 Actions 탭에서 직접 다시 돌릴 수도 있습니다.
+
+`main` 에 머지되면 `.github/workflows/deploy.yml` 이 이어서 웹사이트를 배포합니다.
 
 ### 웹 지원 범위
 
