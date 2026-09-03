@@ -120,3 +120,28 @@ describe('색상 대비', () => {
     expect(contrast(colors.warning, colors.warningLight)).toBeLessThan(4.5);
   });
 });
+
+describe('통증 슬라이더는 0~10 을 한 줄에 둔다', () => {
+  /**
+   * 칸 너비를 고정하면 좁은 화면에서 '10' 만 다음 줄로 밀려나,
+   * 눈금이 9에서 끝나는 것처럼 보여 통증이 낮아 보이는 착시가 생긴다.
+   * (2026-09-03 실제 제보)
+   */
+  const source = readFileSync(join(__dirname, '..', '..', 'components', 'PainSlider.tsx'), 'utf8');
+
+  it('줄바꿈을 막는다', () => {
+    expect(source).toContain("flexWrap: 'nowrap'");
+    expect(source).not.toContain("flexWrap: 'wrap'");
+  });
+
+  it('칸이 고정 너비가 아니라 남은 폭을 나눠 갖는다', () => {
+    const cell = source.slice(source.indexOf('cell: {'), source.indexOf('cellText:'));
+    expect(cell).toContain('flex: 1');
+    expect(cell).not.toMatch(/width:\s*\d/);
+  });
+
+  it('세로 크기는 손가락으로 누를 수 있는 크기를 지킨다', () => {
+    const cell = source.slice(source.indexOf('cell: {'), source.indexOf('cellText:'));
+    expect(cell).toContain('height: MIN_TOUCH_SIZE');
+  });
+});

@@ -4,6 +4,15 @@
  * 이 파일은 화면·엔진 어디에도 의존하지 않는다. 순수 타입만 둔다.
  */
 
+/**
+ * 시작 경로. 자세한 설명과 상수는 tracks.ts 에 있다.
+ * (tracks.ts 가 이 파일을 참조하므로 타입 자체는 여기 둔다)
+ */
+export type TrackId = 'purpose' | 'assessment';
+
+/** 목적 트랙에서 고른 운동 목적 */
+export type PurposeId = 'posture' | 'warmup' | 'functional' | 'strength';
+
 // ---------- 기본 정보 ----------
 export type UserType = 'student' | 'adult' | 'athlete' | 'general';
 export type AgeGroup = 'teens' | 'twenties' | 'thirties' | 'fortiesPlus';
@@ -149,6 +158,17 @@ export interface Assessment {
   schemaVersion: typeof ASSESSMENT_SCHEMA_VERSION;
   answeredAt: string;
 
+  /**
+   * 어느 경로로 시작했는지. (docs/SAFETY_POLICY.md §21)
+   *
+   * 이 필드가 생기기 전에 저장된 응답에는 없으므로 선택 필드로 둔다.
+   * 읽을 때는 assessmentTrack() 을 써서 기본값을 받는다.
+   */
+  track?: TrackId;
+
+  /** 목적 트랙에서 고른 운동 목적. 설문 트랙에서는 없다 */
+  purpose?: PurposeId;
+
   userType: UserType;
   ageGroup: AgeGroup;
   sex: Sex;
@@ -169,6 +189,14 @@ export interface Assessment {
 
   sleepQuality: SleepQuality;
   stressLevel: StressLevel;
+}
+
+/**
+ * 이 응답이 어느 트랙인지. 없으면 설문 트랙으로 본다.
+ * (트랙 개념이 생기기 전 응답은 모두 설문 트랙이었다)
+ */
+export function assessmentTrack(assessment: Pick<Assessment, 'track'>): TrackId {
+  return assessment.track ?? 'assessment';
 }
 
 /** 설문 진행 중의 부분 응답 */

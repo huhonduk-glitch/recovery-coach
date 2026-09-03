@@ -59,7 +59,7 @@ export function PainSlider({ value, onChange, label = '지금 통증은 몇 점�
 
       <View style={styles.scaleRow}>
         <Text style={styles.scaleEnd}>통증 없음</Text>
-        <Text style={styles.scaleEnd}>참기 어려움</Text>
+        <Text style={[styles.scaleEnd, styles.scaleEndRight]}>참기 어려움</Text>
       </View>
 
       {value !== null ? (
@@ -75,9 +75,18 @@ export function PainSlider({ value, onChange, label = '지금 통증은 몇 점�
 const styles = StyleSheet.create({
   root: { marginBottom: spacing.lg },
   label: { ...typography.bodyStrong, color: colors.text, marginBottom: spacing.md },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  /**
+   * 0~10 을 반드시 한 줄에 둔다.
+   *
+   * 칸 너비를 고정하면 좁은 화면에서 '10' 만 다음 줄로 밀려나,
+   * 눈금이 9에서 끝나는 것처럼 보이고 통증이 낮아 보이는 착시가 생긴다.
+   * (2026-09-03 실제 제보) 그래서 줄바꿈을 막고 칸이 폭을 나눠 갖게 한다.
+   */
+  row: { flexDirection: 'row', flexWrap: 'nowrap', gap: 3 },
   cell: {
-    width: 42,
+    flex: 1,
+    // 아주 좁은 화면에서도 숫자가 잘리지 않을 만큼은 지킨다
+    minWidth: 26,
     height: MIN_TOUCH_SIZE,
     borderRadius: radius.sm,
     borderWidth: 1,
@@ -93,6 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: spacing.xs,
   },
+  scaleEndRight: { textAlign: 'right' },
   scaleEnd: { ...typography.caption, color: colors.textDisabled },
   readout: {
     flexDirection: 'row',

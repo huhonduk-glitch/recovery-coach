@@ -45,6 +45,16 @@ import {
 import { assessmentStorage, recommendationStorage } from '@/features/assessment/assessmentStorage';
 import { buildRecommendation } from '@/features/assessment/recommendation';
 import type { BodyRegion } from '@/features/assessment/assessmentTypes';
+import {
+  PURPOSE_CHOICES,
+  PURPOSE_TRACK_FLAG_IDS,
+  purposeToGoals,
+  resolveTrack,
+  TRACK_CHOICES,
+  TRACK_SWITCH_NOTICE,
+  type PurposeId,
+  type TrackId,
+} from '@/features/assessment/tracks';
 import { useAssessmentForm } from '@/features/assessment/useAssessmentForm';
 import { REGION_LABEL } from '@/features/exercise/exerciseRules';
 import { colors, spacing, typography } from '@/theme';
@@ -57,9 +67,13 @@ import { WEIGHT_INPUT_NOTICE } from '@/utils/privacy';
  * 위험 신호 문항은 특히 그렇다.
  */
 
+/** 설문 트랙 안에서의 길이 선택 */
 type SurveyMode = 'quick' | 'full';
 
 type StepId =
+  | 'track'
+  | 'purposeSafety'
+  | 'purpose'
   | 'mode'
   | 'userType'
   | 'basic'
@@ -82,6 +96,15 @@ export default function AssessmentScreen() {
   const { state, set, toggleIn, setPainDetail, studentMode } = form;
 
   const [surveyMode, setSurveyMode] = useState<SurveyMode | null>(null);
+  /**
+   * 사용자가 고른 시작 경로.
+   * 저장될 트랙(state.track)과 따로 둔다. '아픈 곳이 있다' 를 고르면 저장될 트랙은
+   * 설문으로 바뀌지만, 화면 흐름은 목적 트랙에서 이어져야 하기 때문이다.
+   */
+  const [trackChoice, setTrackChoice] = useState<TrackId | null>(null);
+  const [purpose, setPurpose] = useState<PurposeId | null>(null);
+  /** 목적 트랙에서 '아픈 곳이 있다' 를 고르면 설문 트랙으로 넘어간다 */
+  const [purposeHasPain, setPurposeHasPain] = useState<boolean | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [painIndex, setPainIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -94,7 +117,26 @@ export default function AssessmentScreen() {
    *    안전 게이트를 우회하는 경로를 만들지 않는다. (docs/SAFETY_POLICY.md §2)
    */
   const steps = useMemo<StepId[]>(() => {
-    const base: StepId[] = ['mode'];
+    const base: StepId[] = ['track'];
+    if (trackChoice === null) return base;
+
+    // ── 목적 트랙 ── 나이대까지만 묻고 목적을 고른다
+    if (trackChoice === 'purpose') {
+      base.push('userType', 'basic', 'purposeSafety');
+
+      // 아픈 곳이 있다고 하면 목적 선택 대신 몸 상태를 여쭙는다
+      if (purposeHasPain === true) {
+        base.push('painRegions');
+        if (state.painRegions.length > 0) base.push('painDetail');
+        base.push('redFlags');
+        return base;
+      }
+      base.push('purpose');
+      return base;
+    }
+
+    // ── 설문 트랙 ──
+    base.push('mode');
     if (surveyMode === null) return base;
 
     base.push('userType', 'basic');
@@ -111,7 +153,7 @@ export default function AssessmentScreen() {
       base.push('background', 'weight', 'nutritionGoal', 'nutritionHabit', 'allergies', 'eatingRisk', 'condition');
     }
     return base;
-  }, [surveyMode, state.painRegions.length]);
+  }, [trackChoice, purposeHasPain, surveyMode, state.painRegions.length]);
 
   /** 건너뛸 수 있는 단계 (안전과 직결된 단계는 제외한다) */
   const SKIPPABLE: StepId[] = [
@@ -157,6 +199,14 @@ export default function AssessmentScreen() {
     const assessment = form.build();
     if (!assessment) return;
 
+    // 마지막 방어선: 아픈 곳을 고른 응답이 목적 트랙으로 저장되면
+    // 회복운동 제한이 풀려 버린다. 화면 흐름과 무관하게 여기서 바로잡는다.
+    const track = resolveTrack({
+      chosen: assessment.track ?? 'assessment',
+      hasPain: assessment.painRegions.length > 0,
+    });
+    if (track !== assessment.track) assessment.track = track;
+
     setSubmitting(true);
     const recommendation = buildRecommendation(assessment);
 
@@ -175,13 +225,21 @@ export default function AssessmentScreen() {
   /** 다음 버튼을 누를 수 있는 조건 */
   const canProceed = ((): boolean => {
     switch (step) {
+      case 'track':
+        return trackChoice !== null;
+      case 'purposeSafety':
+        // 위험 신호를 확인했다고 눌렀거나 하나라도 골랐고,
+        // 아픈 곳이 있는지도 답해야 넘어간다
+        return (state.redFlagsConfirmed || state.redFlags.length > 0) && purposeHasPain !== null;
+      case 'purpose':
+        return purpose !== null;
       case 'mode':
         return surveyMode !== null;
       case 'userType':
         return state.userType !== null;
       case 'basic':
-        // 빠른 시작에서는 나이대만 있으면 넘어갈 수 있다 (성별은 선택)
-        return surveyMode === 'quick'
+        // 목적 트랙과 빠른 시작에서는 나이대만 있으면 넘어갈 수 있다 (성별은 선택)
+        return trackChoice === 'purpose' || surveyMode === 'quick'
           ? state.ageGroup !== null
           : state.ageGroup !== null && state.sex !== null;
       case 'environment':
@@ -251,6 +309,124 @@ export default function AssessmentScreen() {
       }
     >
       <ProgressBar current={stepIndex + 1} total={steps.length} />
+
+      {step === 'track' ? (
+        <>
+          <Question
+            title="어떻게 시작할까요?"
+            hint="두 가지 방법이 있어요. 나중에 언제든 바꿀 수 있습니다."
+          />
+
+          {TRACK_CHOICES.map((t) => (
+            <OptionButton
+              key={t.id}
+              label={`${t.label} (${t.duration})`}
+              hint={`${t.decidedBy} — ${t.description}`}
+              selected={trackChoice === t.id}
+              onPress={() => {
+                setTrackChoice(t.id);
+                set('track', t.id);
+                // 트랙을 바꾸면 앞서 고른 것들을 지운다
+                setSurveyMode(null);
+                setPurpose(null);
+                setPurposeHasPain(null);
+              }}
+            />
+          ))}
+
+          <SafetyNotice
+            tone="warning"
+            title="어느 쪽을 고르셔도 건너뛰지 않는 것"
+            text="안전 확인은 두 경로 모두에서 반드시 합니다. 아프거나 불편한 곳이 있다고 하시면, 목적으로 시작하셨더라도 몸 상태를 여쭙고 그 부위에 맞는 회복 루틴으로 안내해 드려요."
+          />
+        </>
+      ) : null}
+
+      {step === 'purposeSafety' ? (
+        <>
+          <Question
+            title="시작 전에 확인할게요"
+            hint="해당하는 것이 있으면 골라 주세요. 없으면 아래에서 '해당 없음' 을 눌러 주세요."
+          />
+
+          {RED_FLAG_QUESTIONS.filter((q) => PURPOSE_TRACK_FLAG_IDS.includes(q.id)).map((q) => (
+            <OptionButton
+              key={q.id}
+              label={q.label}
+              hint={q.hint}
+              multi
+              selected={state.redFlags.includes(q.id)}
+              onPress={() => {
+                toggleIn('redFlags', q.id);
+                set('redFlagsConfirmed', true);
+              }}
+            />
+          ))}
+
+          <OptionButton
+            label="해당하는 것이 없습니다"
+            multi
+            selected={state.redFlagsConfirmed && state.redFlags.length === 0}
+            onPress={() => {
+              set('redFlags', []);
+              set('redFlagsConfirmed', true);
+            }}
+          />
+
+          <Question title="지금 아프거나 불편한 곳이 있나요?" />
+          <OptionButton
+            label="없어요"
+            selected={purposeHasPain === false}
+            onPress={() => {
+              setPurposeHasPain(false);
+              set('track', resolveTrack({ chosen: 'purpose', hasPain: false }));
+            }}
+          />
+          <OptionButton
+            label="있어요"
+            hint="부위와 통증 정도를 여쭙고 회복 루틴으로 안내해 드릴게요."
+            selected={purposeHasPain === true}
+            onPress={() => {
+              setPurposeHasPain(true);
+              // 아픈 몸에 목적만 보고 운동을 주지 않는다 (docs/SAFETY_POLICY.md §21)
+              set('track', resolveTrack({ chosen: 'purpose', hasPain: true }));
+              set('purpose', null);
+            }}
+          />
+
+          {purposeHasPain === true ? (
+            <SafetyNotice tone="info" title="경로를 바꿀게요" text={TRACK_SWITCH_NOTICE} />
+          ) : null}
+        </>
+      ) : null}
+
+      {step === 'purpose' ? (
+        <>
+          <Question
+            title="어떤 운동을 하고 싶으세요?"
+            hint="고르신 목적에 맞는 운동을 바로 안내해 드려요."
+          />
+          {PURPOSE_CHOICES.map((p) => (
+            <OptionButton
+              key={p.id}
+              label={p.label}
+              hint={p.description}
+              selected={purpose === p.id}
+              onPress={() => {
+                setPurpose(p.id);
+                set('purpose', p.id);
+                set('goals', purposeToGoals(p.id));
+              }}
+            />
+          ))}
+
+          <SafetyNotice
+            tone="info"
+            title="부위별 회복운동은 여기에 없어요"
+            text="어깨·허리·무릎·발목·목 회복운동은 통증 정도와 단계를 확인해야 안전하게 안내할 수 있어요. 필요하시면 내정보에서 몸 상태 설문을 진행해 주세요."
+          />
+        </>
+      ) : null}
 
       {step === 'mode' ? (
         <>

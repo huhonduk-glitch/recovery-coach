@@ -341,6 +341,7 @@ npm run review:workbook
 | 유연성·균형 운동 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
 | 청소년 활동량 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
 | 개인정보 수집·이용 안내문 | `src/utils/privacy.ts` | **법률 검토 전** |
+| 목적 트랙 위험 신호 6개 선정 | `tracks.ts` | 앱 제작자가 정함. **의료 전문가 검수 전** |
 
 기준값은 `src/features/assessment/assessmentEngine.ts` 상단 상수 한 곳에 모여 있어,
 검수 결과가 나오면 그 파일만 고치면 됩니다.
