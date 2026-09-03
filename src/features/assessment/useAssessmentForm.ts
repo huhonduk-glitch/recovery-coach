@@ -18,7 +18,9 @@ import {
   type RedFlagId,
   type Sex,
   type SleepQuality,
+  type PurposeId,
   type StressLevel,
+  type TrackId,
   type UserType,
 } from './assessmentTypes';
 
@@ -29,6 +31,10 @@ import {
  */
 
 export interface AssessmentFormState {
+  /** 어느 경로로 시작했는지. 목적 트랙에서 아픈 곳이 있으면 설문 트랙으로 바뀐다 */
+  track: TrackId;
+  /** 목적 트랙에서 고른 운동 목적 */
+  purpose: PurposeId | null;
   userType: UserType | null;
   ageGroup: AgeGroup | null;
   sex: Sex | null;
@@ -50,6 +56,8 @@ export interface AssessmentFormState {
 }
 
 const INITIAL: AssessmentFormState = {
+  track: 'assessment',
+  purpose: null,
   userType: null,
   ageGroup: null,
   sex: null,
@@ -154,6 +162,8 @@ export function useAssessmentForm() {
     return {
       schemaVersion: ASSESSMENT_SCHEMA_VERSION,
       answeredAt: new Date().toISOString(),
+      track: state.track,
+      ...(state.purpose !== null ? { purpose: state.purpose } : {}),
       userType,
       ageGroup,
       sex,

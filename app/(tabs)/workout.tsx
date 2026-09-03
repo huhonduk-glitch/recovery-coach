@@ -1,9 +1,12 @@
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Card, Screen } from '@/components';
+import { Card, SafetyNotice, Screen } from '@/components';
 import { PROGRAMS } from '@/data/programs';
+import { assessmentStorage } from '@/features/assessment/assessmentStorage';
+import { assessmentTrack, type TrackId } from '@/features/assessment/assessmentTypes';
+import { isCategoryAllowed } from '@/features/assessment/tracks';
 import type { ExerciseCategory } from '@/features/exercise/exerciseTypes';
 import { colors, MIN_TOUCH_SIZE, radius, spacing, typography } from '@/theme';
 
@@ -27,19 +30,50 @@ const CATEGORY_GROUPS: { key: string; label: string; categories: ExerciseCategor
 ];
 
 export default function WorkoutTabScreen() {
+  const [track, setTrack] = useState<TrackId>('assessment');
   const [groupKey, setGroupKey] = useState('recovery');
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const a = await assessmentStorage.get();
+      if (cancelled || a === null) return;
+      const t = assessmentTrack(a);
+      setTrack(t);
+      // 목적 트랙에서는 회복운동을 보여 주지 않으므로 다른 묶음을 먼저 편다
+      if (t === 'purpose') setGroupKey('posture');
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /**
+   * 목적 트랙에서는 부위별 회복운동을 감춘다.
+   * 회복운동은 통증 정도와 단계 판정이 있어야 배정할 수 있다.
+   * (docs/SAFETY_POLICY.md §21)
+   */
+  const groups = useMemo(
+    () =>
+      CATEGORY_GROUPS.filter((g) => g.categories.some((c) => isCategoryAllowed(track, c))),
+    [track],
+  );
+
   const programs = useMemo(() => {
-    const group = CATEGORY_GROUPS.find((g) => g.key === groupKey);
+    const group = groups.find((g) => g.key === groupKey);
     if (!group) return [];
-    return PROGRAMS.filter((p) => group.categories.includes(p.category));
-  }, [groupKey]);
+    return PROGRAMS.filter(
+      (p) => group.categories.includes(p.category) && isCategoryAllowed(track, p.category),
+    );
+  }, [groups, groupKey, track]);
 
   return (
     <Screen>
       <Text style={styles.title}>운동</Text>
       <Text style={styles.subtitle}>
-        회복운동은 1단계부터 순서대로 진행합니다. 단계를 건너뛰지 마세요.
+        {track === 'purpose'
+          ? '고르신 목적에 맞는 운동입니다. 아픈 곳이 생기면 내정보에서 몸 상태 설문을 진행해 주세요.'
+          : '회복운동은 1단계부터 순서대로 진행합니다. 단계를 건너뛰지 마세요.'}
       </Text>
 
       {/* 운동 지침과 부위별 손상 이해로 가는 입구 */}
@@ -59,7 +93,7 @@ export default function WorkoutTabScreen() {
       </Pressable>
 
       <View style={styles.tabs}>
-        {CATEGORY_GROUPS.map((g) => {
+        {groups.map((g) => {
           const active = g.key === groupKey;
           return (
             <Pressable
@@ -74,6 +108,14 @@ export default function WorkoutTabScreen() {
           );
         })}
       </View>
+
+      {track === 'purpose' ? (
+        <SafetyNotice
+          tone="info"
+          title="부위별 회복운동을 찾으시나요?"
+          text="어깨·허리·무릎·발목·목 회복운동은 통증 정도와 단계를 확인해야 안전하게 안내할 수 있어요. 내정보에서 몸 상태 설문을 진행하시면 열립니다."
+        />
+      ) : null}
 
       {programs.map((p) => (
         <Pressable
