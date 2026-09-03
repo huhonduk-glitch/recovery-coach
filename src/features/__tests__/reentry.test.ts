@@ -21,19 +21,19 @@ beforeEach(async () => {
 describe('설문을 마친 사용자의 재접속', () => {
   it('설문과 추천이 모두 있으면 홈으로 간다', () => {
     expect(
-      resolveGateRoute({ consentValid: true, hasAssessment: true, blocked: false }),
+      resolveGateRoute({ consentValid: true, privacyValid: true, hasAssessment: true, blocked: false }),
     ).toBe('/(tabs)');
   });
 
   it('설문을 아직 안 했으면 설문으로 간다', () => {
     expect(
-      resolveGateRoute({ consentValid: true, hasAssessment: false, blocked: false }),
+      resolveGateRoute({ consentValid: true, privacyValid: true, hasAssessment: false, blocked: false }),
     ).toBe('/assessment');
   });
 
   it('동의가 없으면 온보딩으로 간다', () => {
     expect(
-      resolveGateRoute({ consentValid: false, hasAssessment: true, blocked: false }),
+      resolveGateRoute({ consentValid: false, privacyValid: false, hasAssessment: true, blocked: false }),
     ).toBe('/onboarding');
   });
 });
@@ -102,7 +102,7 @@ describe('위험 신호로 차단된 사용자의 재접속', () => {
     expect(rec?.riskLevel).toBe('red');
 
     expect(
-      resolveGateRoute({ consentValid: true, hasAssessment: true, blocked: true }),
+      resolveGateRoute({ consentValid: true, privacyValid: true, hasAssessment: true, blocked: true }),
     ).toBe('/assessment/blocked');
   });
 });

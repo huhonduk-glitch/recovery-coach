@@ -105,6 +105,19 @@ export default function SettingsTabScreen() {
         />
       </Card>
 
+      <Card title="동작 영상 관리">
+        <Text style={styles.desc}>
+          동작마다 연결된 영상을 직접 추가하고, 순서를 바꾸고, 지울 수 있어요. 앱은 주소만
+          저장하고 재생은 원작자 채널에서 열립니다.
+        </Text>
+        <Button
+          label="동작 영상 관리하기"
+          variant="outline"
+          onPress={() => router.push('/videos')}
+          style={styles.button}
+        />
+      </Card>
+
       <Card title="안전 안내">
         <Button
           label={showDisclaimer ? '접기' : '안전 안내 다시 보기'}
@@ -133,6 +146,10 @@ export default function SettingsTabScreen() {
       <Card title="내 데이터 전체 삭제">
         <Text style={styles.desc}>
           지금까지의 설문 응답과 운동 기록을 모두 지웁니다. 되돌릴 수 없습니다.
+        </Text>
+        <Text style={styles.note}>
+          직접 등록하신 동작 영상 목록은 지워지지 않아요. 그것은 영상 관리 화면에서 따로
+          되돌릴 수 있습니다.
         </Text>
         <Button label="전체 삭제" variant="danger" onPress={confirmDelete} style={styles.button} />
       </Card>

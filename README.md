@@ -191,10 +191,38 @@ npm run serve:web  # 만들어진 결과를 로컬에서 확인
 확인용 명령어
 
 ```bash
-npm run typecheck  # 타입 오류 검사
-npm run lint       # 코드 규칙 검사
-npm test           # 테스트 실행
+npm run typecheck    # 타입 오류 검사
+npm run lint         # 코드 규칙 검사
+npm test             # 테스트 실행
+npm run videos:check # 영상 링크가 실제 운동과 맞는지 확인
+npm run images:check # 이미지 등록표 확인
 ```
+
+### 자동 검사 (GitHub Actions)
+
+`.github/workflows/ci.yml` 이 **코드를 올릴 때마다 자동으로** 위 검사를 돌립니다.
+직접 명령어를 치지 않아도 PR 화면 아래쪽에 결과가 뜹니다.
+
+| 항목 | 무엇을 잡나 |
+|---|---|
+| 타입 검사 | 없는 값을 화면에서 꺼내 쓰는 실수 |
+| 코드 규칙 | 쓰지 않는 변수, 잘못된 훅 사용 |
+| 테스트 | **안전 규칙이 깨졌는지** (아래 참고) |
+| 영상 링크 확인 | 없는 운동에 영상이 걸려 있는지, 링크 형식이 맞는지 |
+| 이미지 등록표 확인 | 등록은 했는데 파일이 없는 운동이 있는지 |
+| 웹 빌드 | 실제로 빌드가 되는지 |
+
+테스트가 지키고 있는 안전 규칙 (깨지면 빨간불이 뜹니다)
+
+- 위험 신호가 있으면 어떤 경로로도 운동 루틴이 나오지 않는다
+- 설문 건너뛰기 목록에 위험 신호 문항이 절대 들어가지 않는다
+- 학생 모드에서 숫자 목표(칼로리·탄단지 비율)가 나오지 않는다
+- 손상 교육 자료에 재활 기간이 '몇 주' 로 적히지 않는다
+- 영상 관리 화면에 앱 안에서 영상을 재생하는 도구가 들어가지 않는다
+- 2026-09-02 점검에서 제외한 영상 6개가 다시 등록되지 않는다
+
+**빨간불이 떴을 때** — PR 화면에서 실패한 항목 이름을 누르면 어느 파일 몇 번째 줄에서
+무엇이 걸렸는지 그대로 나옵니다. 저장소 Actions 탭에서 직접 다시 돌릴 수도 있습니다.
 
 ### 웹 지원 범위
 
@@ -283,8 +311,20 @@ npm run review:workbook
 | 운동 중 중단 기준 | 통증 6점 이상 | 기획 단계에서 정한 값 |
 | 탄단지 비율 | `mealTemplates.ts` | 기획 단계에서 정한 값 |
 | 운동 동작 선택과 단계 배치 | `src/data/exercises/` | 기획 단계에서 정한 구성 |
+| 체중당 단백질 g/kg | `mealTemplates.ts` | 2026-09-02 사용자 지정값. ISSN 지침 참고 |
+| 부위별 손상 설명 | `injuryEducation.ts` | 일반적으로 알려진 내용. **의료 전문가 검수 전** |
+| 유연성·균형 운동 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
+| 청소년 활동량 권고 | `activityGuidelines.ts` | ⚠️ 원문 미확인 (`verified: false`) |
+| 개인정보 수집·이용 안내문 | `src/utils/privacy.ts` | **법률 검토 전** |
 
 기준값은 `src/features/assessment/assessmentEngine.ts` 상단 상수 한 곳에 모여 있어,
 검수 결과가 나오면 그 파일만 고치면 됩니다.
+
+운동 지침(`activityGuidelines.ts`)은 항목마다 `verified` 표시가 있습니다.
+`verified: false` 인 항목은 앱 화면에도 **'확인 필요'** 라고 그대로 나옵니다.
+확인하지 못한 것을 확인한 것처럼 쓰지 않기 위해서입니다.
+
+동작 영상 목록은 2026-09-02에 **앱 제작자 본인이 자체 점검**한 것이며,
+외부 전문가 검수를 받은 것이 아닙니다. ([docs/VIDEO_CANDIDATES.md](docs/VIDEO_CANDIDATES.md))
 
 미확정 항목 전체 목록은 [docs/CONTENT_GUIDE.md §9](docs/CONTENT_GUIDE.md) 참고.

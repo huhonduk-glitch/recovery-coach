@@ -1,0 +1,74 @@
+# 코드가 올라올 때마다 자동으로 검사합니다.
+#
+# 여기서 하는 일
+#   1. 타입 검사   — 화면에서 없는 값을 꺼내 쓰는 실수를 잡습니다
+#   2. 코드 규칙   — 쓰지 않는 변수, 잘못된 훅 사용 등을 잡습니다
+#   3. 테스트      — 안전 규칙(위험 신호 차단, 재활 기간 숫자 금지,
+#                    영상 저작권 선)이 깨지지 않았는지 확인합니다
+#   4. 자료 확인   — 영상 링크와 이미지 등록표가 실제 운동과 맞는지 봅니다
+#   5. 웹 빌드     — 실제로 빌드가 되는지 확인합니다
+#
+# 결과는 PR 화면 아래쪽에 초록색(통과) 또는 빨간색(실패)으로 표시됩니다.
+# 빨간색이 뜨면 그 항목을 눌러 어느 파일에서 무엇이 걸렸는지 볼 수 있습니다.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # 저장소 Actions 탭에서 직접 돌려 볼 수도 있습니다
+  workflow_dispatch:
+
+# 같은 브랜치에 새 커밋이 올라오면 이전 검사는 멈춥니다 (시간 절약)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: 타입 · 규칙 · 테스트
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # package-lock.json 그대로 설치합니다 (버전이 멋대로 올라가지 않게)
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 타입 검사
+        run: npx tsc --noEmit
+
+      - name: 코드 규칙 검사
+        run: npx eslint .
+
+      - name: 테스트
+        run: npx jest --ci
+
+      - name: 영상 링크 확인
+        run: npm run videos:check
+
+      - name: 운동 이미지 등록표 확인
+        run: npm run images:check
+
+  build:
+    name: 웹 빌드
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 웹 빌드
+        run: npm run build:web

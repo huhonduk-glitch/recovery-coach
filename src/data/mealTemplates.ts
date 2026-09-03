@@ -33,6 +33,12 @@ export const NUTRITION_PLANS: readonly NutritionPlan[] = [
     title: '건강 체중관리',
     targetUser: '무리하지 않고 식사의 질을 바꾸고 싶은 사용자',
     macroRatio: { carbMin: 35, carbMax: 45, proteinMin: 25, proteinMax: 35, fatMin: 20, fatMax: 30 },
+    proteinPerKg: {
+      min: 1.0,
+      max: 1.2,
+      source:
+        '검수 지정값(2026-09-02). 참고로 ISSN 지침은 열량을 줄이는 시기에 근육량 유지를 위해 더 높은 섭취를 제시하므로, 영양 전문가 재확인이 필요합니다.',
+    },
     mainPrinciples: [
       '굶지 않습니다. 끼니를 거르면 다음 끼니에 몰아 먹게 됩니다.',
       '단백질과 채소를 먼저 채우고 나머지를 채웁니다.',
@@ -76,6 +82,12 @@ export const NUTRITION_PLANS: readonly NutritionPlan[] = [
     title: '벌크업 / 근육량 증가',
     targetUser: '근육량을 늘리고 싶은 사용자',
     macroRatio: { carbMin: 45, carbMax: 55, proteinMin: 20, proteinMax: 25, fatMin: 20, fatMax: 30 },
+    proteinPerKg: {
+      min: 1.6,
+      max: 2.0,
+      source:
+        '검수 지정값 2.0 g/kg (2026-09-02). ISSN 지침이 제시하는 1.4~2.0 g/kg 범위의 위쪽에 해당합니다.',
+    },
     mainPrinciples: [
       '총 식사량이 부족하면 근육이 늘지 않습니다. 끼니를 챙기는 것이 먼저입니다.',
       '매 끼니 단백질을 손바닥 1개분 이상 챙깁니다.',
@@ -119,6 +131,11 @@ export const NUTRITION_PLANS: readonly NutritionPlan[] = [
     title: '일반 건강식',
     targetUser: '규칙적이고 균형 잡힌 식사를 하고 싶은 사용자',
     macroRatio: { carbMin: 45, carbMax: 55, proteinMin: 15, proteinMax: 25, fatMin: 20, fatMax: 30 },
+    proteinPerKg: {
+      min: 0.8,
+      max: 1.0,
+      source: '검수 지정값 1.0 g/kg (2026-09-02).',
+    },
     mainPrinciples: [
       '하루 세 끼를 비슷한 시간에 먹습니다.',
       '한 끼에 단백질·채소·탄수화물 세 가지를 채웁니다.',
@@ -159,6 +176,11 @@ export const NUTRITION_PLANS: readonly NutritionPlan[] = [
     title: '회복 / 면역 / 미네랄',
     targetUser: '부상 회복 중이거나 컨디션을 끌어올리고 싶은 사용자',
     macroRatio: { carbMin: 40, carbMax: 50, proteinMin: 20, proteinMax: 30, fatMin: 20, fatMax: 30 },
+    proteinPerKg: {
+      min: 1.0,
+      max: 1.4,
+      source: '검수 지정값 1.0 g/kg (2026-09-02). 회복기에는 평소보다 조금 더 필요할 수 있습니다.',
+    },
     mainPrinciples: [
       '회복에는 단백질이 평소보다 조금 더 필요합니다.',
       '채소와 과일로 비타민과 미네랄을 채웁니다.',

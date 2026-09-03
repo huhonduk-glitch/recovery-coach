@@ -1,22 +1,29 @@
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 
-import { assessmentStorage, consentStorage } from '@/features/assessment/assessmentStorage';
+import {
+  assessmentStorage,
+  consentStorage,
+  privacyStorage,
+} from '@/features/assessment/assessmentStorage';
 import { loadRecommendation } from '@/features/assessment/recommendationService';
 
 import { LoadingScreen } from './LoadingScreen';
 import { isRouteAllowed, resolveGateRoute, type GateState } from '@/features/assessment/routeGuard';
 import { DISCLAIMER_VERSION } from '@/utils/safety';
+import { PRIVACY_VERSION } from '@/utils/privacy';
 
 async function readGateState(): Promise<GateState> {
-  const [consentValid, assessment, recommendation] = await Promise.all([
+  const [consentValid, privacyValid, assessment, recommendation] = await Promise.all([
     consentStorage.isValid(DISCLAIMER_VERSION),
+    privacyStorage.isValid(PRIVACY_VERSION),
     assessmentStorage.get(),
     loadRecommendation(),
   ]);
 
   return {
     consentValid,
+    privacyValid,
     hasAssessment: assessment !== null,
     blocked: recommendation?.riskLevel === 'red',
   };

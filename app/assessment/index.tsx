@@ -10,6 +10,7 @@ import {
   ProgressBar,
   SafetyNotice,
   Screen,
+  WeightInput,
 } from '@/components';
 import {
   AGE_GROUP_CHOICES,
@@ -47,6 +48,7 @@ import type { BodyRegion } from '@/features/assessment/assessmentTypes';
 import { useAssessmentForm } from '@/features/assessment/useAssessmentForm';
 import { REGION_LABEL } from '@/features/exercise/exerciseRules';
 import { colors, spacing, typography } from '@/theme';
+import { WEIGHT_INPUT_NOTICE } from '@/utils/privacy';
 
 /**
  * 초기 설문.
@@ -68,6 +70,7 @@ type StepId =
   | 'painDetail'
   | 'redFlags'
   | 'background'
+  | 'weight'
   | 'nutritionGoal'
   | 'nutritionHabit'
   | 'allergies'
@@ -105,7 +108,7 @@ export default function AssessmentScreen() {
     base.push('redFlags');
 
     if (surveyMode === 'full') {
-      base.push('background', 'nutritionGoal', 'nutritionHabit', 'allergies', 'eatingRisk', 'condition');
+      base.push('background', 'weight', 'nutritionGoal', 'nutritionHabit', 'allergies', 'eatingRisk', 'condition');
     }
     return base;
   }, [surveyMode, state.painRegions.length]);
@@ -117,6 +120,7 @@ export default function AssessmentScreen() {
     'goals',
     'painRegions',
     'background',
+    'weight',
     'nutritionGoal',
     'nutritionHabit',
     'allergies',
@@ -194,6 +198,9 @@ export default function AssessmentScreen() {
         return state.redFlagsConfirmed || state.redFlags.length > 0;
       case 'background':
         return state.background.frequency !== undefined && state.background.squatExperience !== undefined;
+      case 'weight':
+        // 선택 입력이라 비워도 넘어갈 수 있다
+        return true;
       case 'nutritionGoal':
         return state.nutrition.goal !== undefined;
       case 'nutritionHabit':
@@ -540,6 +547,17 @@ export default function AssessmentScreen() {
               onPress={() => set('background', { ...state.background, style: c.value })}
             />
           ))}
+        </>
+      ) : null}
+
+      {step === 'weight' ? (
+        <>
+          <Question
+            title="체중을 알려 주시겠어요?"
+            hint="선택 입력입니다. 넣지 않으셔도 괜찮아요."
+          />
+          <SafetyNotice tone="info" text={WEIGHT_INPUT_NOTICE} />
+          <WeightInput value={state.weightKg} onChange={(v) => set('weightKg', v)} />
         </>
       ) : null}
 

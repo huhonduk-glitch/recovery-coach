@@ -32,6 +32,8 @@ export interface AssessmentFormState {
   userType: UserType | null;
   ageGroup: AgeGroup | null;
   sex: Sex | null;
+  /** 체중(kg). 선택 입력이라 비어 있을 수 있다 */
+  weightKg: number | null;
   places: Place[];
   equipment: Equipment[];
   availableTime: AvailableTime | null;
@@ -51,6 +53,7 @@ const INITIAL: AssessmentFormState = {
   userType: null,
   ageGroup: null,
   sex: null,
+  weightKg: null,
   places: [],
   equipment: [],
   availableTime: null,
@@ -154,6 +157,7 @@ export function useAssessmentForm() {
       userType,
       ageGroup,
       sex,
+      ...(state.weightKg !== null ? { weightKg: state.weightKg } : {}),
       places: state.places.length > 0 ? state.places : ['home'],
       equipment: state.equipment.length > 0 ? state.equipment : ['bodyweight'],
       availableTime,
