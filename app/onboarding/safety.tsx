@@ -1,25 +1,13 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import {
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, OptionButton, WebStorageNotice } from '@/components';
 import { consentStorage } from '@/features/assessment/assessmentStorage';
 import { colors, radius, spacing, typography } from '@/theme';
 import { DISCLAIMER_FULL, DISCLAIMER_VERSION } from '@/utils/safety';
-
-/** 스크롤이 바닥 근처에 닿았는지 (여유 24px) */
-function isAtBottom(e: NativeSyntheticEvent<NativeScrollEvent>): boolean {
-  const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
-  return layoutMeasurement.height + contentOffset.y >= contentSize.height - 24;
-}
+import { useReadToEnd } from '@/utils/useReadToEnd';
 
 /**
  * 안전 안내 및 동의.
@@ -29,7 +17,7 @@ function isAtBottom(e: NativeSyntheticEvent<NativeScrollEvent>): boolean {
  */
 export default function SafetyConsentScreen() {
   const insets = useSafeAreaInsets();
-  const [readToEnd, setReadToEnd] = useState(false);
+  const { readToEnd, scrollProps } = useReadToEnd();
   const [checked, setChecked] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -44,10 +32,7 @@ export default function SafetyConsentScreen() {
       <ScrollView
         style={styles.flex}
         contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.lg }]}
-        onScroll={(e) => {
-          if (isAtBottom(e)) setReadToEnd(true);
-        }}
-        scrollEventThrottle={64}
+        {...scrollProps}
       >
         <Text style={styles.title}>이용 전 확인해 주세요</Text>
         <Text style={styles.subtitle}>
