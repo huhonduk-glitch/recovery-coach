@@ -1,24 +1,13 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import {
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, OptionButton, SafetyNotice } from '@/components';
 import { privacyStorage } from '@/features/assessment/assessmentStorage';
 import { colors, radius, spacing, typography } from '@/theme';
 import { PRIVACY_MINOR_NOTICE, PRIVACY_NOTICE, PRIVACY_VERSION } from '@/utils/privacy';
-
-function isAtBottom(e: NativeSyntheticEvent<NativeScrollEvent>): boolean {
-  const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
-  return layoutMeasurement.height + contentOffset.y >= contentSize.height - 24;
-}
+import { useReadToEnd } from '@/utils/useReadToEnd';
 
 /**
  * 개인정보 수집·이용 동의.
@@ -28,7 +17,7 @@ function isAtBottom(e: NativeSyntheticEvent<NativeScrollEvent>): boolean {
  */
 export default function PrivacyConsentScreen() {
   const insets = useSafeAreaInsets();
-  const [readToEnd, setReadToEnd] = useState(false);
+  const { readToEnd, scrollProps } = useReadToEnd();
   const [checked, setChecked] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -43,10 +32,7 @@ export default function PrivacyConsentScreen() {
       <ScrollView
         style={styles.flex}
         contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.lg }]}
-        onScroll={(e) => {
-          if (isAtBottom(e)) setReadToEnd(true);
-        }}
-        scrollEventThrottle={64}
+        {...scrollProps}
       >
         <Text style={styles.title} accessibilityRole="header">
           개인정보 수집·이용 동의
