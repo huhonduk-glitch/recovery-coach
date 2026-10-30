@@ -1,0 +1,24 @@
+{
+  "name": "리커버핏 Coach",
+  "slug": "recovery-coach",
+  "tagline": "간단한 설문으로 운동·회복 루틴과 영양 가이드를 안내",
+  "story": "체육교사가 옆에서 코칭해 주는 느낌으로, 앱 화면만 보고도 안전하게 운동할 수 있도록 만들고 있습니다. 설문으로 몸 상태를 확인한 뒤 운동 추천, 회복 루틴, 영양 가이드를 안내합니다. 위험 신호가 확인되면 운동 루틴 대신 전문가 상담을 안내합니다.",
+  "target": [
+    "학생"
+  ],
+  "tags": [
+    "수업"
+  ],
+  "status": "개발 중",
+  "public": true,
+  "appUrl": "https://huhonduk-glitch.github.io/recovery-coach/",
+  "videoUrl": "확인필요",
+  "preview": "images/preview.gif",
+  "useCases": [
+    "몸 상태에 맞는 회복 운동을 안내받고 싶을 때",
+    "운동 전후 영양 가이드를 확인할 때",
+    "운동 기록을 꾸준히 남기고 싶을 때"
+  ],
+  "lesson": "",
+  "order": 6
+}
